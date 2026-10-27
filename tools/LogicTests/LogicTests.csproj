@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>VenueLedger.LogicTests</RootNamespace>
+    <AssemblyName>VenueLedger.LogicTests</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <!-- The real logic files, compiled as-is. Nothing here references Dalamud. -->
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="../../Venue.cs" />
+    <Compile Include="../../Schedule.cs" />
+  </ItemGroup>
+
+</Project>
