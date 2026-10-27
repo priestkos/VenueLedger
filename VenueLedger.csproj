@@ -14,6 +14,7 @@
     <Punchline>Every venue you know, on one clock.</Punchline>
     <Description>Keeps a ledger of FFXIV venues with the details you actually need at the door: location with a one-click Lifestream teleport command, website, Discord, opening and closing times in the venue's own timezone, and notes. Every venue's hours are converted into your own timezone so schedules across venues line up side by side, a live clock reads your system time and timezone, and the whole ledger can be copied or exported to a file.</Description>
     <PackageTags>venue;club;rp;event;timezone;schedule;lifestream;housing</PackageTags>
+    <Tags>venue;club;rp;event;timezone;schedule</Tags>
     <RepoUrl>https://github.com/saijm/VenueLedger</RepoUrl>
   </PropertyGroup>
 

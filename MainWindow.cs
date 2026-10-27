@@ -39,6 +39,7 @@ public sealed class MainWindow : Window, IDisposable
     private string zoneFilter = string.Empty;
     private string filter = string.Empty;
     private bool dirty;
+    private DateTime dirtySince;
     private bool confirmDelete;
     private string flash = string.Empty;
     private DateTime flashUntil;
@@ -74,6 +75,14 @@ public sealed class MainWindow : Window, IDisposable
         using var style = KosMos.PushStyle();
 
         var now = DateTimeOffset.UtcNow;
+
+        // Typing saves on blur, but a window closed mid-word must not lose the edit: flush a
+        // short debounce as well, so the config on disk is never more than a second behind.
+        if (dirty && (DateTime.UtcNow - dirtySince).TotalMilliseconds > 900)
+        {
+            Save();
+        }
+
         var board = Board.Build(config.Venues, config.BoardZone, now, config.Use24Hour);
 
         DrawHeader(now, board);
@@ -240,19 +249,22 @@ public sealed class MainWindow : Window, IDisposable
             }
 
             var line = status.Known
-                ? (status.IsOpen ? "open · closes in " : "opens in ") + ClockText.Humanize(status.Remaining)
+                ? (status.IsOpen ? "open - closes in " : "closed - opens in ") + ClockText.Humanize(status.Remaining)
                 : status.Error;
 
             var boardZone = ZoneBook.Resolve(config.BoardZone);
-            var detail = venue.OpenTime + "-" + venue.CloseTime;
+            var detail = string.Empty;
             if (status.Known && status.Session is not null)
             {
                 var open = TimeZoneInfo.ConvertTime(status.Session.Opens, boardZone);
-                detail = ClockText.Format((int)open.TimeOfDay.TotalMinutes, config.Use24Hour) + " your time";
+                var close = TimeZoneInfo.ConvertTime(status.Session.Closes, boardZone);
+                detail = ClockText.Format((int)open.TimeOfDay.TotalMinutes, config.Use24Hour) + "-" +
+                         ClockText.Format((int)close.TimeOfDay.TotalMinutes, config.Use24Hour) + " your time";
             }
 
             ImGui.Indent(10f * ImGuiHelpers.GlobalScale);
-            KosMos.Hint(line + " · " + detail);
+            KosMos.Hint(line);
+            if (detail.Length > 0) KosMos.Hint(detail);
             ImGui.Unindent(10f * ImGuiHelpers.GlobalScale);
             ImGui.Spacing();
         }
@@ -294,7 +306,7 @@ public sealed class MainWindow : Window, IDisposable
             if (ImGui.InputText("##name", ref name, NameMax))
             {
                 venue.Name = name;
-                dirty = true;
+                MarkDirty();
             }
 
             CommitEdit();
@@ -308,7 +320,7 @@ public sealed class MainWindow : Window, IDisposable
             if (ImGui.InputTextWithHint("##location", "Ward 12, Plot 30, Lavender Beds, Mateus", ref location, UrlMax))
             {
                 venue.Location = location;
-                dirty = true;
+                MarkDirty();
             }
 
             CommitEdit();
@@ -325,7 +337,7 @@ public sealed class MainWindow : Window, IDisposable
             if (ImGui.InputTextWithHint("##world", "world", ref world, 32))
             {
                 venue.World = world;
-                dirty = true;
+                MarkDirty();
             }
 
             CommitEdit();
@@ -359,7 +371,7 @@ public sealed class MainWindow : Window, IDisposable
             if (ImGui.InputInt("##ward", ref ward, 1, 5))
             {
                 venue.Ward = Math.Clamp(ward, 0, 30);
-                dirty = true;
+                MarkDirty();
             }
 
             CommitEdit();
@@ -371,7 +383,7 @@ public sealed class MainWindow : Window, IDisposable
             if (ImGui.InputInt("##plot", ref plot, 1, 5))
             {
                 venue.Plot = Math.Clamp(plot, 0, 60);
-                dirty = true;
+                MarkDirty();
             }
 
             CommitEdit();
@@ -388,7 +400,7 @@ public sealed class MainWindow : Window, IDisposable
             if (ImGui.InputTextWithHint("##website", "https://", ref website, UrlMax))
             {
                 venue.Website = website;
-                dirty = true;
+                MarkDirty();
             }
 
             CommitEdit();
@@ -407,7 +419,7 @@ public sealed class MainWindow : Window, IDisposable
             if (ImGui.InputTextWithHint("##discord", "https://discord.gg/", ref discord, UrlMax))
             {
                 venue.Discord = discord;
-                dirty = true;
+                MarkDirty();
             }
 
             CommitEdit();
@@ -451,7 +463,7 @@ public sealed class MainWindow : Window, IDisposable
             if (ImGui.InputTextMultiline("##notes", ref notes, NoteMax, new Vector2(-1, 84f * ImGuiHelpers.GlobalScale)))
             {
                 venue.Notes = notes;
-                dirty = true;
+                MarkDirty();
             }
 
             CommitEdit();
@@ -470,7 +482,7 @@ public sealed class MainWindow : Window, IDisposable
         {
             if (open) venue.OpenTime = text;
             else venue.CloseTime = text;
-            dirty = true;
+            MarkDirty();
         }
 
         if (ImGui.IsItemDeactivatedAfterEdit()) Save();
@@ -893,6 +905,12 @@ public sealed class MainWindow : Window, IDisposable
     }
 
     // ------------------------------------------------------------------ helpers
+
+    private void MarkDirty()
+    {
+        dirty = true;
+        dirtySince = DateTime.UtcNow;
+    }
 
     private void CommitEdit()
     {
