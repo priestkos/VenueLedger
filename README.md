@@ -63,7 +63,6 @@ schedule across timezones.
 - **Theme** — smoke `#0a0507`, wine `#3d1a1f`, ember `#d05a26`, cream `#f6e2c6`, gold `#d9a94e`, with
   dotted rules instead of solid separators and square corners. Colours are pushed with `ImRaii`
   around this window's widgets only — **your global Dalamud style is untouched**, and nothing is
-  hooked. `preview.html` is a static mock of the same design for reading outside the game.
 
 ## Build
 
