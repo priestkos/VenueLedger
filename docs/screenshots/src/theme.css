@@ -1,0 +1,329 @@
+/* Kos Mos palette — matches Theme.cs */
+:root {
+  --ground: #0a0507;
+  --well: #080406;
+  --surface: #120a0c;
+  --card: #150b0d;
+  --raised: #1e1012;
+  --line: #3d1a1f;
+  --ink: #f6e2c6;
+  --ink-soft: #f7d6a8;
+  --dim: #96736d;
+  --ember: #d05a26;
+  --gold: #d9a94e;
+  --crimson: #b8323f;
+  --live: #d9a94e;
+  --font: "Segoe UI", system-ui, sans-serif;
+  --mono: "Consolas", "Liberation Mono", monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--ink);
+  background: linear-gradient(160deg, #1a2030 0%, #0d1218 45%, #151018 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.scene-backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background:
+    radial-gradient(ellipse 80% 50% at 70% 80%, rgba(208, 90, 38, 0.15), transparent),
+    linear-gradient(180deg, transparent 60%, rgba(10, 5, 7, 0.9));
+}
+
+.imgui-window {
+  position: relative;
+  width: 940px;
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+}
+
+.title-bar {
+  background: var(--well);
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--line);
+}
+
+.window-body { padding: 12px 14px; }
+
+.big-title {
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  display: inline-block;
+}
+
+.big-clock {
+  float: right;
+  font-size: 28px;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.hint {
+  clear: both;
+  color: var(--dim);
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.dotted-rule {
+  height: 8px;
+  margin: 8px 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--ember) 0 2px,
+    transparent 2px 6px
+  );
+  opacity: 0.55;
+}
+
+.tabs-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 10px 0;
+}
+
+.tab {
+  background: transparent;
+  border: none;
+  color: var(--dim);
+  padding: 6px 10px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  cursor: default;
+}
+
+.tab.active {
+  color: var(--ink-soft);
+}
+
+.tab-spacer { flex: 1; }
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.checkbox-row input {
+  accent-color: var(--gold);
+  width: 14px;
+  height: 14px;
+}
+
+.panel-row {
+  display: flex;
+  gap: 8px;
+  min-height: 420px;
+}
+
+.child-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 8px 10px;
+}
+
+.panel-list { width: 264px; flex-shrink: 0; }
+.panel-main { flex: 1; min-width: 0; }
+
+.section-label {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.section-label::after {
+  content: "";
+  display: block;
+  height: 6px;
+  margin-top: 4px;
+  background-image: repeating-linear-gradient(90deg, var(--ember) 0 2px, transparent 2px 6px);
+  opacity: 0.4;
+}
+
+.input-hint {
+  width: 100%;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 5px 8px;
+  color: var(--dim);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.venue-item {
+  padding: 4px 6px;
+  margin-bottom: 4px;
+  border-radius: 2px;
+}
+
+.venue-item.selected {
+  background: rgba(217, 169, 78, 0.12);
+}
+
+.venue-name { font-size: 13px; }
+.venue-name.live { color: var(--live); }
+.venue-name.closed { color: var(--ink); }
+
+.venue-sub {
+  margin-left: 10px;
+  font-size: 11px;
+  color: var(--dim);
+  line-height: 1.35;
+}
+
+.field-table { width: 100%; border-collapse: collapse; }
+.field-table td { vertical-align: top; padding: 5px 4px; }
+.field-label { color: var(--dim); width: 82px; font-size: 12px; }
+
+.field-input {
+  width: 100%;
+  background: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 5px 8px;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.field-input.small { width: auto; display: inline-block; }
+.inline-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+
+.btn {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--ink);
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.gold-text { color: var(--gold); font-size: 12px; margin-top: 4px; }
+.live-text { color: var(--live); }
+
+.footer {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px dotted var(--ember);
+  opacity: 0.5;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.flash { color: var(--gold); font-size: 12px; margin-left: 8px; }
+
+.board-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.board-table th {
+  background: var(--raised);
+  text-align: left;
+  padding: 6px 8px;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--line);
+  font-weight: 600;
+}
+
+.board-table td {
+  padding: 8px;
+  border-bottom: 1px solid rgba(61, 26, 31, 0.5);
+}
+
+.board-table tr:nth-child(even) td { background: rgba(30, 16, 18, 0.45); }
+
+.day-strip {
+  width: 160px;
+  height: 16px;
+  background: rgba(30, 16, 18, 0.75);
+  border: 1px solid var(--line);
+  position: relative;
+}
+
+.day-strip .session {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  background: rgba(217, 169, 78, 0.8);
+}
+
+.day-strip .session.closed { background: rgba(208, 90, 38, 0.8); }
+
+.day-strip .now-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--crimson);
+}
+
+.export-preview {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 10px 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--ink);
+  white-space: pre-wrap;
+  min-height: 280px;
+}
+
+.export-options { display: flex; gap: 16px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+
+/* Chat mock for slash commands */
+.chat-overlay {
+  position: relative;
+  width: 520px;
+  margin-top: 80px;
+  margin-left: auto;
+  margin-right: 40px;
+}
+
+.chat-panel {
+  background: rgba(8, 4, 6, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.chat-line { margin-bottom: 4px; }
+.chat-prefix { color: var(--dim); }
+.chat-plugin { color: var(--gold); }
+.chat-user { color: var(--ink-soft); }
+
+.layout-with-chat {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+}

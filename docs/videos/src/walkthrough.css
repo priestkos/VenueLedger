@@ -1,0 +1,108 @@
+/* Walkthrough stage — 1280×720 capture frame */
+html, body.stage {
+  width: 1280px;
+  height: 720px;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+body.stage {
+  position: relative;
+  display: block;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+  background: linear-gradient(160deg, #1a2030 0%, #0d1218 45%, #151018 100%);
+}
+
+.stage-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#disclaimer {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 200;
+  background: rgba(10, 5, 7, 0.92);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  padding: 12px 22px;
+  border-radius: 2px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  opacity: 1;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+#disclaimer.is-hidden {
+  opacity: 0;
+}
+
+#caption {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 150;
+  max-width: 920px;
+  text-align: center;
+  background: rgba(10, 5, 7, 0.88);
+  border: 1px solid var(--line);
+  color: var(--gold);
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  padding: 10px 18px;
+  border-radius: 2px;
+  min-height: 1.2em;
+}
+
+#scene-chat {
+  display: none;
+  width: 100%;
+  height: 100%;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 36px;
+}
+
+#scene-chat.is-visible {
+  display: flex;
+}
+
+#scene-window.is-hidden {
+  display: none;
+}
+
+.scene-backdrop {
+  opacity: 0.35;
+}
+
+#scene-chat .imgui-window {
+  opacity: 0.92;
+  transform: scale(0.92);
+  transform-origin: top left;
+}
+
+.command-caption {
+  color: var(--ink-soft);
+  font-size: 13px;
+  margin-bottom: 12px;
+  max-width: 520px;
+}
+
+.tab[data-tab] {
+  cursor: pointer;
+}
+
+.venue-item[data-venue] {
+  cursor: pointer;
+}

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>02 Board tab mock</title>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body>
+  <div class="scene-backdrop"></div>
+  <div class="imgui-window">
+    <div class="title-bar">Venue Ledger</div>
+    <div class="window-body">
+      <span class="big-title">VENUE LEDGER</span>
+      <span class="big-clock">19:42:08</span>
+      <div class="hint">3 venues | compare in UTC · system clock: UTC · UTC UTC+00:00</div>
+      <div class="dotted-rule"></div>
+
+      <div class="tabs-row">
+        <button class="tab">LEDGER</button>
+        <button class="tab active">[ BOARD ]</button>
+        <button class="tab">EXPORT</button>
+        <span class="tab-spacer"></span>
+        <label class="checkbox-row"><input type="checkbox" checked /> 24h</label>
+      </div>
+
+      <div class="child-panel" style="min-height:440px">
+        <div class="section-label">Board</div>
+        <div class="hint" style="margin-bottom:10px">Every venue's hours projected onto UTC. The red line is now.</div>
+
+        <table class="board-table">
+          <thead>
+            <tr>
+              <th>Venue</th>
+              <th>Hours</th>
+              <th>Your time</th>
+              <th>Length</th>
+              <th>Status</th>
+              <th>Today</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="live-text">Example Character's Lounge</span></td>
+              <td>20:00-02:00 JST</td>
+              <td class="gold-text">11:00-17:00</td>
+              <td class="hint">6h</td>
+              <td class="live-text">open - closes in 4h 12m</td>
+              <td>
+                <div class="day-strip">
+                  <div class="session" style="left:46%; width:25%"></div>
+                  <div class="now-line" style="left:82%"></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Crystal Stage</td>
+              <td>21:00-01:00 CET</td>
+              <td class="gold-text">20:00-00:00</td>
+              <td class="hint">4h</td>
+              <td class="hint">closed - opens in 2h 30m</td>
+              <td>
+                <div class="day-strip">
+                  <div class="session closed" style="left:83%; width:17%"></div>
+                  <div class="now-line" style="left:82%"></div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Harbor Cafe</td>
+              <td>18:00-22:00 PST</td>
+              <td class="gold-text">02:00-06:00 +1d</td>
+              <td class="hint">4h</td>
+              <td class="hint">closed - opens in 6h 18m</td>
+              <td>
+                <div class="day-strip">
+                  <div class="session closed" style="left:8%; width:17%"></div>
+                  <div class="now-line" style="left:82%"></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        <button class="btn">New venue</button>
+        <button class="btn">Duplicate</button>
+        <button class="btn">Delete</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
