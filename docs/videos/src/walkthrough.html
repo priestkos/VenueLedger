@@ -10,6 +10,21 @@
   <div id="disclaimer">UI mock-up — not in-game footage</div>
   <div id="caption"></div>
 
+  <div id="walkthrough-cursor" aria-hidden="true">
+    <div class="cursor-shape">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M3 2L3 18L7.5 13.5L11 20L13.5 18.5L10 12L16 11L3 2Z"
+          fill="#f6e2c6"
+          stroke="#1a1012"
+          stroke-width="1.2"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </div>
+    <div class="cursor-ripple"></div>
+  </div>
+
   <div class="stage-inner">
     <div id="scene-window">
       <div class="scene-backdrop"></div>
@@ -29,7 +44,7 @@
             <label class="checkbox-row"><input type="checkbox" id="checkbox-24h" checked /> 24h</label>
           </div>
 
-          <div id="panel-ledger">
+          <div id="panel-ledger" class="tab-panel is-active">
             <div class="panel-row">
               <div class="child-panel panel-list">
                 <div class="section-label">Ledger</div>
@@ -91,7 +106,7 @@
             </div>
           </div>
 
-          <div id="panel-board" hidden>
+          <div id="panel-board" class="tab-panel" hidden>
             <div class="child-panel" style="min-height:440px">
               <div class="section-label">Board</div>
               <div class="hint" style="margin-bottom:10px">Every venue's hours projected onto UTC. The red line is now.</div>
@@ -138,7 +153,7 @@
             </div>
           </div>
 
-          <div id="panel-export" hidden>
+          <div id="panel-export" class="tab-panel" hidden>
             <div class="section-label">Export</div>
             <div class="export-options">
               <label class="checkbox-row"><input type="checkbox" id="chk-travel" checked /> Include travel commands</label>
@@ -219,27 +234,129 @@ Open right now: 1 venue
       export: document.getElementById('tab-export'),
     };
 
-    function setCaption(text) {
-      document.getElementById('caption').textContent = text;
+    const cursorEl = document.getElementById('walkthrough-cursor');
+    const rippleEl = cursorEl.querySelector('.cursor-ripple');
+    const cursor = { x: 640, y: 200 };
+
+    function easeInOutCubic(t) {
+      return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     }
 
-    function showTab(name) {
-      for (const key of Object.keys(panels)) {
-        panels[key].hidden = key !== name;
-        tabs[key].classList.toggle('active', key === name);
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    function updateCursorPosition() {
+      cursorEl.style.transform = `translate(${cursor.x}px, ${cursor.y}px)`;
+    }
+
+    function elementCenter(el) {
+      const rect = el.getBoundingClientRect();
+      return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    }
+
+    async function moveCursorTo(x, y, durationMs = 520) {
+      const startX = cursor.x;
+      const startY = cursor.y;
+      const start = performance.now();
+      await new Promise((resolve) => {
+        function frame(now) {
+          const t = Math.min(1, (now - start) / durationMs);
+          const eased = easeInOutCubic(t);
+          cursor.x = startX + (x - startX) * eased;
+          cursor.y = startY + (y - startY) * eased;
+          updateCursorPosition();
+          if (t < 1) requestAnimationFrame(frame);
+          else resolve();
+        }
+        requestAnimationFrame(frame);
+      });
+    }
+
+    async function moveCursorToElement(el, durationMs) {
+      const { x, y } = elementCenter(el);
+      await moveCursorTo(x, y, durationMs);
+    }
+
+    function playRipple() {
+      rippleEl.classList.remove('is-active');
+      void rippleEl.offsetWidth;
+      rippleEl.classList.add('is-active');
+    }
+
+    async function pressCursor() {
+      cursorEl.classList.add('is-pressing');
+      playRipple();
+      await sleep(90);
+      cursorEl.classList.remove('is-pressing');
+      await sleep(160);
+    }
+
+    async function clickElement(el, onActivate) {
+      el.classList.add('is-pressed');
+      await moveCursorToElement(el, 480);
+      await pressCursor();
+      if (onActivate) {
+        const result = onActivate();
+        if (result && typeof result.then === 'function') {
+          await result;
+        }
+      }
+      el.classList.remove('is-pressed');
+      await sleep(220);
+    }
+
+    async function setCaption(text) {
+      const el = document.getElementById('caption');
+      if (el.textContent === text) return;
+      el.classList.add('is-fading');
+      await sleep(280);
+      el.textContent = text;
+      el.classList.remove('is-fading');
+      await sleep(120);
+    }
+
+    function applyTabLabels(active) {
+      for (const key of Object.keys(tabs)) {
         tabs[key].textContent =
           key === 'ledger'
-            ? name === 'ledger'
+            ? active === 'ledger'
               ? '[ LEDGER ]'
               : 'LEDGER'
             : key === 'board'
-              ? name === 'board'
+              ? active === 'board'
                 ? '[ BOARD ]'
                 : 'BOARD'
-              : name === 'export'
+              : active === 'export'
                 ? '[ EXPORT ]'
                 : 'EXPORT';
       }
+    }
+
+    let activeTab = 'ledger';
+
+    async function showTab(name) {
+      if (name === activeTab) return;
+      const outgoing = panels[activeTab];
+      const incoming = panels[name];
+
+      outgoing.classList.add('is-switching-out');
+      await sleep(320);
+      outgoing.hidden = true;
+      outgoing.classList.remove('is-switching-out', 'is-active');
+
+      incoming.hidden = false;
+      incoming.classList.add('is-switching-in');
+      void incoming.offsetWidth;
+      incoming.classList.remove('is-switching-in');
+      incoming.classList.add('is-active');
+
+      for (const key of Object.keys(tabs)) {
+        tabs[key].classList.toggle('active', key === name);
+      }
+      applyTabLabels(name);
+      activeTab = name;
+      await sleep(380);
     }
 
     function selectVenue(id) {
@@ -291,21 +408,78 @@ Open right now: 1 venue
     document.getElementById('chk-travel').addEventListener('change', refreshExportPreview);
     document.getElementById('chk-notes').addEventListener('change', refreshExportPreview);
     document.getElementById('btn-copy').addEventListener('click', () => {
-      const flash = document.getElementById('export-flash');
-      flash.hidden = false;
+      document.getElementById('export-flash').hidden = false;
     });
+
+    updateCursorPosition();
+
+    async function hideDisclaimer() {
+      document.getElementById('disclaimer').classList.add('is-hidden');
+      await sleep(700);
+    }
+
+    async function showChatScene() {
+      document.getElementById('scene-window').classList.add('is-hidden');
+      await sleep(200);
+      document.getElementById('scene-chat').classList.add('is-visible');
+      await sleep(650);
+    }
+
+    async function playDemo() {
+      await setCaption('');
+      await sleep(3800);
+
+      await hideDisclaimer();
+      await setCaption('Ledger tab — filterable list, open/closed status, and venue editor');
+      await sleep(1400);
+
+      await clickElement(document.getElementById('venue-crystal'), () => selectVenue('crystal'));
+      await clickElement(document.getElementById('venue-example'), () => selectVenue('example'));
+
+      await clickElement(document.getElementById('tab-board'), () => showTab('board'));
+      await setCaption('Board tab — projected hours and Today day strip (crimson line = now)');
+      await sleep(900);
+
+      const checkbox24 = document.getElementById('checkbox-24h');
+      await clickElement(checkbox24.closest('.checkbox-row'), () => {
+        checkbox24.checked = !checkbox24.checked;
+        apply24h(checkbox24.checked);
+      });
+      await clickElement(checkbox24.closest('.checkbox-row'), () => {
+        checkbox24.checked = !checkbox24.checked;
+        apply24h(checkbox24.checked);
+      });
+
+      await clickElement(document.getElementById('tab-export'), () => showTab('export'));
+      await setCaption('Export tab — toggles, live preview, Copy list / Save .txt');
+      await sleep(800);
+
+      const notesRow = document.getElementById('chk-notes').closest('.checkbox-row');
+      await clickElement(notesRow, () => {
+        document.getElementById('chk-notes').click();
+        refreshExportPreview();
+      });
+      await clickElement(notesRow, () => {
+        document.getElementById('chk-notes').click();
+        refreshExportPreview();
+      });
+
+      await clickElement(document.getElementById('btn-copy'), () => {
+        document.getElementById('btn-copy').click();
+      });
+      await sleep(1200);
+
+      await showChatScene();
+      await setCaption('`/venue` commands — list, copy, and export in Dalamud chat');
+      await sleep(7800);
+    }
 
     window.__walkthrough = {
       setCaption,
       showTab,
       selectVenue,
-      hideDisclaimer() {
-        document.getElementById('disclaimer').classList.add('is-hidden');
-      },
-      showChatScene() {
-        document.getElementById('scene-window').classList.add('is-hidden');
-        document.getElementById('scene-chat').classList.add('is-visible');
-      },
+      hideDisclaimer,
+      showChatScene,
       toggle24h() {
         const cb = document.getElementById('checkbox-24h');
         cb.checked = !cb.checked;
@@ -318,6 +492,7 @@ Open right now: 1 venue
       clickCopy() {
         document.getElementById('btn-copy').click();
       },
+      playDemo,
     };
   </script>
 </body>

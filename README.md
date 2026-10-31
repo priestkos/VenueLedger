@@ -16,17 +16,13 @@ Screenshots are mock-ups illustrating the UI, not captures from the live game.
 | ![Export tab — preview and output](docs/screenshots/03-export-tab.png) | **Export tab** — include travel/notes toggles, live preview, **Copy list** / **Save .txt**, and flash feedback. |
 | ![Slash commands — chat output](docs/screenshots/04-slash-commands.png) | **`/venue` commands** — `/venue help`, `/venue list`, `/venue copy`, and `/venue export` messages in chat (works with the window closed). |
 
-Regenerate PNGs from the HTML sources: `cd docs/screenshots/src && npm install && npx playwright install chromium && node render.mjs`.
-
 ### Mock-up video
 
 These clips are **HTML mock-ups**, not recordings from the live game (same as the screenshots above).
 
 ![Mock-up walkthrough preview](docs/videos/mockup-walkthrough.gif)
 
-[Download mockup-walkthrough.mp4](docs/videos/mockup-walkthrough.mp4) (1280×720, ~38s)
-
-Regenerate: `cd docs/videos/src && npm install && npx playwright install chromium && node render.mjs`.
+[Download mockup-walkthrough.mp4](docs/videos/mockup-walkthrough.mp4) (1280×720, ~30s)
 
 ### Feature coverage (mock-ups)
 
