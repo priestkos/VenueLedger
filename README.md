@@ -5,6 +5,38 @@ schedule across timezones.
 
 `/venue` · Dalamud API 15 · .NET 10
 
+## Screenshots
+
+Screenshots are mock-ups illustrating the UI, not captures from the live game.
+
+| | |
+| --- | --- |
+| ![Ledger tab — venue list and editor](docs/screenshots/01-ledger-tab.png) | **Ledger tab** — filterable list, open/closed status, full venue editor (fields, Lifestream travel, links, hours, schedule summary, notes), and footer actions. |
+| ![Board tab — projected hours and day strip](docs/screenshots/02-board-tab.png) | **Board tab** — all venues on one board clock with Hours / Your time / Length / Status columns and the **Today** day strip (crimson line = now). |
+| ![Export tab — preview and output](docs/screenshots/03-export-tab.png) | **Export tab** — include travel/notes toggles, live preview, **Copy list** / **Save .txt**, and flash feedback. |
+| ![Slash commands — chat output](docs/screenshots/04-slash-commands.png) | **`/venue` commands** — `/venue help`, `/venue list`, `/venue copy`, and `/venue export` messages in chat (works with the window closed). |
+
+Regenerate PNGs from the HTML sources: `cd docs/screenshots/src && npm install && npx playwright install chromium && node render.mjs`.
+
+### Feature coverage (mock-ups)
+
+| Feature | Screenshot |
+| --- | --- |
+| Header ticking clock + `system clock: …` hint | 01, 02, 03 |
+| Venue count + `compare in …` (board zone) | 01, 02, 03 |
+| **24h** checkbox (12/24-hour board times) | 01, 02, 03 |
+| Tabs: **Ledger** / **Board** / **Export** | 01 / 02 / 03 |
+| Ledger **filter**, selectable list, open/closed + countdown | 01 |
+| Editor: Name, Location, Address (world / district / ward / plot), Website & Discord **Open** / **Copy** | 01 |
+| Opens & Closes (wall clock + per-field timezone combo), **Schedule** row | 01 |
+| **Copy travel** / Lifestream `/li …` preview | 01, 03 |
+| **Notes** field | 01, 03 |
+| Board table + **Today** day strip (session bar + now line) | 02 |
+| Export: **Include travel commands**, **Include notes**, preview, **Copy list**, **Save .txt** | 03 |
+| Footer: **New venue**, **Duplicate**, **Delete** (confirm step is in-window only) | 01 |
+| `/venue`, `/venue copy`, `/venue export`, `/venue list`, `/venue help` | 04 |
+| Config file only (no in-window UI): `BoardZone`, `NewVenueZone` | *(documented under Settings below)* |
+
 ## What it does
 
 | Field | What it does |

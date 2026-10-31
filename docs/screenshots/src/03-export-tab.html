@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>03 Export tab mock</title>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body>
+  <div class="scene-backdrop"></div>
+  <div class="imgui-window">
+    <div class="title-bar">Venue Ledger</div>
+    <div class="window-body">
+      <span class="big-title">VENUE LEDGER</span>
+      <span class="big-clock">19:42:08</span>
+      <div class="hint">3 venues | compare in UTC · system clock: UTC · UTC UTC+00:00</div>
+      <div class="dotted-rule"></div>
+
+      <div class="tabs-row">
+        <button class="tab">LEDGER</button>
+        <button class="tab">BOARD</button>
+        <button class="tab active">[ EXPORT ]</button>
+        <span class="tab-spacer"></span>
+        <label class="checkbox-row"><input type="checkbox" checked /> 24h</label>
+      </div>
+
+      <div class="section-label">Export</div>
+      <div class="export-options">
+        <label class="checkbox-row"><input type="checkbox" checked /> Include travel commands</label>
+        <label class="checkbox-row"><input type="checkbox" checked /> Include notes</label>
+        <span class="hint">24-hour is set on the board.</span>
+      </div>
+
+      <div class="export-preview">VENUE LEDGER - 3 venues
+Board clock: UTC · UTC UTC+00:00 - exported Sat 31 Oct 2026 19:42
+Open right now: 1 venue
+
+1. Example Character's Lounge   [OPEN - CLOSES IN 4H 12M]
+   Location  Ward 12, Plot 30, Lavender Beds, Mateus
+   Travel    /li mateus lavender 12 30
+   Hours     20:00-02:00 JST  -&gt;  11:00-17:00 UTC  (6h)
+   Website   https://example.test/venue
+   Discord   https://discord.gg/example
+   Notes     Dress code: smart casual. Cover charge optional.
+
+2. Crystal Stage   [CLOSED - OPENS IN 2H 30M]
+   Hours     21:00-01:00 CET  -&gt;  20:00-00:00 UTC  (4h)
+
+3. Harbor Cafe   [CLOSED - OPENS IN 6H 18M]
+   Hours     18:00-22:00 PST  -&gt;  02:00-06:00 +1d UTC  (4h)</div>
+
+      <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+        <button class="btn">Copy list</button>
+        <button class="btn">Save .txt</button>
+        <span class="hint">Saved to /config/VenueLedger/venues-20261031-1942.txt</span>
+      </div>
+
+      <div class="footer">
+        <button class="btn">New venue</button>
+        <button class="btn">Duplicate</button>
+        <button class="btn">Delete</button>
+        <span class="flash">Full venue list copied.</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>01 Ledger tab mock</title>
+  <link rel="stylesheet" href="theme.css" />
+</head>
+<body>
+  <div class="scene-backdrop"></div>
+  <div class="imgui-window">
+    <div class="title-bar">Venue Ledger</div>
+    <div class="window-body">
+      <span class="big-title">VENUE LEDGER</span>
+      <span class="big-clock">19:42:08</span>
+      <div class="hint">3 venues | compare in UTC · system clock: UTC · UTC UTC+00:00</div>
+      <div class="dotted-rule"></div>
+
+      <div class="tabs-row">
+        <button class="tab active">[ LEDGER ]</button>
+        <button class="tab">BOARD</button>
+        <button class="tab">EXPORT</button>
+        <span class="tab-spacer"></span>
+        <label class="checkbox-row"><input type="checkbox" checked /> 24h</label>
+      </div>
+
+      <div class="panel-row">
+        <div class="child-panel panel-list">
+          <div class="section-label">Ledger</div>
+          <input class="input-hint" value="" placeholder="filter" readonly />
+          <div class="venue-item selected">
+            <div class="venue-name live">Example Character's Lounge</div>
+            <div class="venue-sub">open - closes in 4h 12m</div>
+            <div class="venue-sub">20:00-02:00 your time</div>
+          </div>
+          <div class="venue-item">
+            <div class="venue-name closed">Crystal Stage</div>
+            <div class="venue-sub">closed - opens in 2h 30m</div>
+            <div class="venue-sub">21:00-01:00 your time</div>
+          </div>
+          <div class="venue-item">
+            <div class="venue-name closed">Untitled venue</div>
+            <div class="venue-sub">closed - opens tomorrow at 04:30</div>
+          </div>
+        </div>
+
+        <div class="child-panel panel-main">
+          <div class="section-label">Venue</div>
+          <table class="field-table">
+            <tr>
+              <td class="field-label">Name</td>
+              <td><input class="field-input" value="Example Character's Lounge" readonly /></td>
+            </tr>
+            <tr>
+              <td class="field-label">Location</td>
+              <td>
+                <input class="field-input" value="Ward 12, Plot 30, Lavender Beds, Mateus" readonly />
+                <div class="inline-row" style="margin-top:6px">
+                  <span class="gold-text">/li mateus lavender 12 30</span>
+                  <button class="btn">Copy travel</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="field-label">Address</td>
+              <td>
+                <div class="inline-row">
+                  <input class="field-input small" style="width:110px" value="Mateus" readonly />
+                  <select class="field-input small" style="width:140px"><option>Lavender Beds</option></select>
+                  <input class="field-input small" style="width:64px" value="12" readonly />
+                  <input class="field-input small" style="width:64px" value="30" readonly />
+                </div>
+                <div class="hint" style="margin-top:4px">District, ward and plot are optional - they are only used to build the travel command.</div>
+              </td>
+            </tr>
+            <tr>
+              <td class="field-label">Website</td>
+              <td>
+                <div class="inline-row">
+                  <input class="field-input" style="flex:1" value="https://example.test/venue" readonly />
+                  <button class="btn">Open</button>
+                  <button class="btn">Copy</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="field-label">Discord</td>
+              <td>
+                <div class="inline-row">
+                  <input class="field-input" style="flex:1" value="https://discord.gg/example" readonly />
+                  <button class="btn">Open</button>
+                  <button class="btn">Copy</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="field-label">Opens</td>
+              <td>
+                <div class="inline-row">
+                  <input class="field-input small" style="width:78px" value="20:00" readonly />
+                  <select class="field-input small" style="width:272px"><option>JST · Asia/Tokyo UTC+09:00</option></select>
+                  <span class="hint">(6h session)</span>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="field-label">Closes</td>
+              <td>
+                <div class="inline-row">
+                  <input class="field-input small" style="width:78px" value="02:00" readonly />
+                  <select class="field-input small" style="width:272px"><option>JST · Asia/Tokyo UTC+09:00</option></select>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td class="field-label">Schedule</td>
+              <td>
+                <div class="gold-text">20:00-02:00 JST   -&gt;   11:00-17:00 UTC   (6h)</div>
+                <div class="live-text">open - closes in 4h 12m</div>
+              </td>
+            </tr>
+            <tr>
+              <td class="field-label">Notes</td>
+              <td><textarea class="field-input" rows="3" readonly>Dress code: smart casual. Cover charge optional.</textarea></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer">
+        <button class="btn">New venue</button>
+        <button class="btn">Duplicate</button>
+        <button class="btn">Delete</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

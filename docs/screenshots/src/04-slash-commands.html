@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>04 Slash commands mock</title>
+  <link rel="stylesheet" href="theme.css" />
+  <style>
+    body { padding: 40px; }
+    .layout-with-chat { max-width: 1280px; }
+    .imgui-window { opacity: 0.92; transform: scale(0.92); transform-origin: top left; }
+    .command-caption {
+      color: var(--ink-soft);
+      font-size: 13px;
+      margin-bottom: 12px;
+      max-width: 520px;
+    }
+  </style>
+</head>
+<body>
+  <div class="scene-backdrop"></div>
+  <div class="layout-with-chat">
+    <div>
+      <div class="imgui-window" style="width:320px">
+        <div class="title-bar">Venue Ledger</div>
+        <div class="window-body" style="padding:16px">
+          <div class="hint" style="margin-bottom:12px">Window can stay closed — clipboard and file export still work from chat.</div>
+          <div class="section-label">Commands</div>
+          <table class="field-table">
+            <tr><td class="field-label">/venue</td><td>open the ledger</td></tr>
+            <tr><td class="field-label">/venue copy</td><td>copy the whole list</td></tr>
+            <tr><td class="field-label">/venue export</td><td>write venues-*.txt</td></tr>
+            <tr><td class="field-label">/venue list</td><td>hours in board zone</td></tr>
+            <tr><td class="field-label">/venue help</td><td>command list</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-overlay">
+      <div class="command-caption">Dalamud chat output from <span class="gold-text">/venue</span> subcommands (plugin tag: VenueLedger)</div>
+      <div class="chat-panel">
+        <div class="chat-line"><span class="chat-user">/venue help</span></div>
+        <div class="chat-line"><span class="chat-plugin">[Venue Ledger]</span> /venue opens the ledger. /venue copy copies the list. /venue export writes a .txt. /venue list prints today's hours to chat.</div>
+        <div class="chat-line" style="margin-top:10px"><span class="chat-user">/venue list</span></div>
+        <div class="chat-line"><span class="chat-plugin">[Venue Ledger]</span> Example Character's Lounge - 11:00-17:00 UTC (open - closes in 4h 12m)</div>
+        <div class="chat-line"><span class="chat-plugin">[Venue Ledger]</span> Crystal Stage - 20:00-00:00 UTC (closed - opens in 2h 30m)</div>
+        <div class="chat-line"><span class="chat-plugin">[Venue Ledger]</span> Harbor Cafe - 02:00-06:00 +1d UTC (closed - opens in 6h 18m)</div>
+        <div class="chat-line" style="margin-top:10px"><span class="chat-user">/venue copy</span></div>
+        <div class="chat-line"><span class="chat-plugin">[Venue Ledger]</span> copied 3 venues to the clipboard.</div>
+        <div class="chat-line" style="margin-top:10px"><span class="chat-user">/venue export</span></div>
+        <div class="chat-line"><span class="chat-plugin">[Venue Ledger]</span> saved /config/VenueLedger/venues-20261031-1942.txt</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
