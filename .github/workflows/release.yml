@@ -38,13 +38,37 @@ jobs:
           Add-Type -AssemblyName System.IO.Compression.FileSystem
           $zip = Get-ChildItem -Recurse -Path bin/Release -Filter latest.zip | Select-Object -First 1
           if (-not $zip) { throw 'Could not find latest.zip under bin/Release' }
-          $staging = Join-Path $env:RUNNER_TEMP 'plugin-package'
-          New-Item -ItemType Directory -Force -Path $staging | Out-Null
-          [System.IO.Compression.ZipFile]::ExtractToDirectory($zip.FullName, $staging)
-          $manifest = Get-ChildItem -Path $staging -Filter '*.json' | Select-Object -First 1
-          if (-not $manifest) { throw 'No plugin manifest .json found inside latest.zip' }
-          $meta = Get-Content -Raw $manifest.FullName | ConvertFrom-Json
+
+          $pluginAssemblyName = 'VenueLedger'
+          $archive = [System.IO.Compression.ZipFile]::OpenRead($zip.FullName)
+          try {
+            $dllEntries = @($archive.Entries | Where-Object { $_.Name -like '*.dll' })
+            if ($dllEntries.Count -eq 0) {
+              throw 'No plugin .dll found inside latest.zip'
+            }
+            $dllEntry = $dllEntries | Where-Object { $_.Name -eq "$pluginAssemblyName.dll" } | Select-Object -First 1
+            if (-not $dllEntry) {
+              $dllEntry = $dllEntries | Select-Object -First 1
+            }
+            $manifestName = [System.IO.Path]::ChangeExtension($dllEntry.Name, '.json')
+            $manifestEntry = $archive.Entries | Where-Object { $_.Name -eq $manifestName }
+            if (-not $manifestEntry) {
+              throw "Manifest $manifestName not found inside latest.zip"
+            }
+            $reader = New-Object System.IO.StreamReader($manifestEntry.Open())
+            try {
+              $meta = $reader.ReadToEnd() | ConvertFrom-Json
+            } finally {
+              $reader.Dispose()
+            }
+          } finally {
+            $archive.Dispose()
+          }
+
           $assemblyVersion = [string]$meta.AssemblyVersion
+          if ([string]::IsNullOrWhiteSpace($assemblyVersion)) {
+            throw 'AssemblyVersion missing from plugin manifest'
+          }
           Write-Host "Manifest AssemblyVersion: $assemblyVersion"
 
           if ($env:GITHUB_EVENT_NAME -eq 'push') {
