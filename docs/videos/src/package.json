@@ -1,0 +1,9 @@
+{
+  "name": "venueledger-mockup-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Render README mock-up walkthrough video from HTML",
+  "dependencies": {
+    "playwright": "^1.49.1"
+  }
+}

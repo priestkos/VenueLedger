@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Venue Ledger mock-up walkthrough</title>
+  <link rel="stylesheet" href="../../screenshots/src/theme.css" />
+  <link rel="stylesheet" href="walkthrough.css" />
+</head>
+<body class="stage">
+  <div id="disclaimer">UI mock-up — not in-game footage</div>
+  <div id="caption"></div>
+
+  <div class="stage-inner">
+    <div id="scene-window">
+      <div class="scene-backdrop"></div>
+      <div class="imgui-window">
+        <div class="title-bar">Venue Ledger</div>
+        <div class="window-body">
+          <span class="big-title">VENUE LEDGER</span>
+          <span class="big-clock" id="big-clock">19:42:08</span>
+          <div class="hint">3 venues | compare in UTC · system clock: UTC · UTC UTC+00:00</div>
+          <div class="dotted-rule"></div>
+
+          <div class="tabs-row">
+            <button type="button" class="tab active" data-tab="ledger" id="tab-ledger">[ LEDGER ]</button>
+            <button type="button" class="tab" data-tab="board" id="tab-board">BOARD</button>
+            <button type="button" class="tab" data-tab="export" id="tab-export">EXPORT</button>
+            <span class="tab-spacer"></span>
+            <label class="checkbox-row"><input type="checkbox" id="checkbox-24h" checked /> 24h</label>
+          </div>
+
+          <div id="panel-ledger">
+            <div class="panel-row">
+              <div class="child-panel panel-list">
+                <div class="section-label">Ledger</div>
+                <input class="input-hint" value="" placeholder="filter" readonly />
+                <div class="venue-item selected" data-venue="example" id="venue-example">
+                  <div class="venue-name live">Example Character's Lounge</div>
+                  <div class="venue-sub">open - closes in 4h 12m</div>
+                  <div class="venue-sub">20:00-02:00 your time</div>
+                </div>
+                <div class="venue-item" data-venue="crystal" id="venue-crystal">
+                  <div class="venue-name closed">Crystal Stage</div>
+                  <div class="venue-sub">closed - opens in 2h 30m</div>
+                  <div class="venue-sub">21:00-01:00 your time</div>
+                </div>
+                <div class="venue-item" data-venue="untitled" id="venue-untitled">
+                  <div class="venue-name closed">Untitled venue</div>
+                  <div class="venue-sub">closed - opens tomorrow at 04:30</div>
+                </div>
+              </div>
+              <div class="child-panel panel-main">
+                <div class="section-label">Venue</div>
+                <table class="field-table">
+                  <tr>
+                    <td class="field-label">Name</td>
+                    <td><input class="field-input" id="editor-name" value="Example Character's Lounge" readonly /></td>
+                  </tr>
+                  <tr>
+                    <td class="field-label">Location</td>
+                    <td>
+                      <input class="field-input" value="Ward 12, Plot 30, Lavender Beds, Mateus" readonly />
+                      <div class="inline-row" style="margin-top:6px">
+                        <span class="gold-text">/li mateus lavender 12 30</span>
+                        <button type="button" class="btn">Copy travel</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="field-label">Opens</td>
+                    <td>
+                      <div class="inline-row">
+                        <input class="field-input small" style="width:78px" value="20:00" readonly />
+                        <select class="field-input small" style="width:272px"><option>JST · Asia/Tokyo UTC+09:00</option></select>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="field-label">Schedule</td>
+                    <td>
+                      <div class="gold-text">20:00-02:00 JST   -&gt;   11:00-17:00 UTC   (6h)</div>
+                      <div class="live-text" id="editor-status">open - closes in 4h 12m</div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="field-label">Notes</td>
+                    <td><textarea class="field-input" rows="2" readonly>Dress code: smart casual. Cover charge optional.</textarea></td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div id="panel-board" hidden>
+            <div class="child-panel" style="min-height:440px">
+              <div class="section-label">Board</div>
+              <div class="hint" style="margin-bottom:10px">Every venue's hours projected onto UTC. The red line is now.</div>
+              <table class="board-table">
+                <thead>
+                  <tr>
+                    <th>Venue</th>
+                    <th>Hours</th>
+                    <th id="board-your-time-header">Your time</th>
+                    <th>Length</th>
+                    <th>Status</th>
+                    <th>Today</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="live-text">Example Character's Lounge</span></td>
+                    <td>20:00-02:00 JST</td>
+                    <td class="gold-text" data-time-24="11:00-17:00" data-time-12="11:00 AM-5:00 PM">11:00-17:00</td>
+                    <td class="hint">6h</td>
+                    <td class="live-text">open - closes in 4h 12m</td>
+                    <td>
+                      <div class="day-strip">
+                        <div class="session" style="left:46%; width:25%"></div>
+                        <div class="now-line" style="left:82%"></div>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Crystal Stage</td>
+                    <td>21:00-01:00 CET</td>
+                    <td class="gold-text" data-time-24="20:00-00:00" data-time-12="8:00 PM-12:00 AM">20:00-00:00</td>
+                    <td class="hint">4h</td>
+                    <td class="hint">closed - opens in 2h 30m</td>
+                    <td>
+                      <div class="day-strip">
+                        <div class="session closed" style="left:83%; width:17%"></div>
+                        <div class="now-line" style="left:82%"></div>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="panel-export" hidden>
+            <div class="section-label">Export</div>
+            <div class="export-options">
+              <label class="checkbox-row"><input type="checkbox" id="chk-travel" checked /> Include travel commands</label>
+              <label class="checkbox-row"><input type="checkbox" id="chk-notes" checked /> Include notes</label>
+              <span class="hint">24-hour is set on the board.</span>
+            </div>
+            <div class="export-preview" id="export-preview">VENUE LEDGER - 3 venues
+Board clock: UTC · UTC UTC+00:00 - exported Sat 31 Oct 2026 19:42
+Open right now: 1 venue
+
+1. Example Character's Lounge   [OPEN - CLOSES IN 4H 12M]
+   Location  Ward 12, Plot 30, Lavender Beds, Mateus
+   Travel    /li mateus lavender 12 30
+   Hours     20:00-02:00 JST  -&gt;  11:00-17:00 UTC  (6h)
+   Notes     Dress code: smart casual. Cover charge optional.
+
+2. Crystal Stage   [CLOSED - OPENS IN 2H 30M]
+   Hours     21:00-01:00 CET  -&gt;  20:00-00:00 UTC  (4h)</div>
+            <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
+              <button type="button" class="btn" id="btn-copy">Copy list</button>
+              <button type="button" class="btn">Save .txt</button>
+            </div>
+          </div>
+
+          <div class="footer">
+            <button type="button" class="btn">New venue</button>
+            <button type="button" class="btn">Duplicate</button>
+            <button type="button" class="btn">Delete</button>
+            <span class="flash" id="export-flash" hidden>Full venue list copied.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="scene-chat">
+      <div class="scene-backdrop"></div>
+      <div class="layout-with-chat">
+        <div>
+          <div class="imgui-window" style="width:320px">
+            <div class="title-bar">Venue Ledger</div>
+            <div class="window-body" style="padding:16px">
+              <div class="hint" style="margin-bottom:12px">Window can stay closed — clipboard and file export still work from chat.</div>
+              <div class="section-label">Commands</div>
+              <table class="field-table">
+                <tr><td class="field-label">/venue</td><td>open the ledger</td></tr>
+                <tr><td class="field-label">/venue copy</td><td>copy the whole list</td></tr>
+                <tr><td class="field-label">/venue export</td><td>write venues-*.txt</td></tr>
+                <tr><td class="field-label">/venue list</td><td>hours in board zone</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="chat-overlay">
+          <div class="command-caption">Dalamud chat output from <span class="gold-text">/venue</span> subcommands (plugin tag: VenueLedger)</div>
+          <div class="chat-panel">
+            <div class="chat-line"><span class="chat-user">/venue list</span></div>
+            <div class="chat-line"><span class="chat-plugin">[Venue Ledger]</span> Example Character's Lounge - 11:00-17:00 UTC (open - closes in 4h 12m)</div>
+            <div class="chat-line"><span class="chat-plugin">[Venue Ledger]</span> Crystal Stage - 20:00-00:00 UTC (closed - opens in 2h 30m)</div>
+            <div class="chat-line" style="margin-top:10px"><span class="chat-user">/venue copy</span></div>
+            <div class="chat-line"><span class="chat-plugin">[Venue Ledger]</span> copied 3 venues to the clipboard.</div>
+            <div class="chat-line" style="margin-top:10px"><span class="chat-user">/venue export</span></div>
+            <div class="chat-line"><span class="chat-plugin">[Venue Ledger]</span> saved /config/VenueLedger/venues-20261031-1942.txt</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const panels = {
+      ledger: document.getElementById('panel-ledger'),
+      board: document.getElementById('panel-board'),
+      export: document.getElementById('panel-export'),
+    };
+    const tabs = {
+      ledger: document.getElementById('tab-ledger'),
+      board: document.getElementById('tab-board'),
+      export: document.getElementById('tab-export'),
+    };
+
+    function setCaption(text) {
+      document.getElementById('caption').textContent = text;
+    }
+
+    function showTab(name) {
+      for (const key of Object.keys(panels)) {
+        panels[key].hidden = key !== name;
+        tabs[key].classList.toggle('active', key === name);
+        tabs[key].textContent =
+          key === 'ledger'
+            ? name === 'ledger'
+              ? '[ LEDGER ]'
+              : 'LEDGER'
+            : key === 'board'
+              ? name === 'board'
+                ? '[ BOARD ]'
+                : 'BOARD'
+              : name === 'export'
+                ? '[ EXPORT ]'
+                : 'EXPORT';
+      }
+    }
+
+    function selectVenue(id) {
+      document.querySelectorAll('.venue-item').forEach((el) => {
+        el.classList.toggle('selected', el.dataset.venue === id);
+      });
+      const nameEl = document.getElementById('editor-name');
+      const statusEl = document.getElementById('editor-status');
+      if (id === 'crystal') {
+        nameEl.value = 'Crystal Stage';
+        statusEl.textContent = 'closed - opens in 2h 30m';
+        statusEl.className = 'hint';
+      } else {
+        nameEl.value = "Example Character's Lounge";
+        statusEl.textContent = 'open - closes in 4h 12m';
+        statusEl.className = 'live-text';
+      }
+    }
+
+    function apply24h(use24) {
+      document.querySelectorAll('[data-time-24]').forEach((cell) => {
+        cell.textContent = use24 ? cell.dataset.time24 : cell.dataset.time12;
+      });
+    }
+
+    function refreshExportPreview() {
+      const travel = document.getElementById('chk-travel').checked;
+      const notes = document.getElementById('chk-notes').checked;
+      let text = `VENUE LEDGER - 3 venues
+Board clock: UTC · UTC UTC+00:00 - exported Sat 31 Oct 2026 19:42
+Open right now: 1 venue
+
+1. Example Character's Lounge   [OPEN - CLOSES IN 4H 12M]
+   Location  Ward 12, Plot 30, Lavender Beds, Mateus`;
+      if (travel) text += '\n   Travel    /li mateus lavender 12 30';
+      text += `
+   Hours     20:00-02:00 JST  ->  11:00-17:00 UTC  (6h)`;
+      if (notes) text += '\n   Notes     Dress code: smart casual. Cover charge optional.';
+      text += `
+
+2. Crystal Stage   [CLOSED - OPENS IN 2H 30M]
+   Hours     21:00-01:00 CET  ->  20:00-00:00 UTC  (4h)`;
+      document.getElementById('export-preview').textContent = text;
+    }
+
+    document.getElementById('checkbox-24h').addEventListener('change', (e) => {
+      apply24h(e.target.checked);
+    });
+    document.getElementById('chk-travel').addEventListener('change', refreshExportPreview);
+    document.getElementById('chk-notes').addEventListener('change', refreshExportPreview);
+    document.getElementById('btn-copy').addEventListener('click', () => {
+      const flash = document.getElementById('export-flash');
+      flash.hidden = false;
+    });
+
+    window.__walkthrough = {
+      setCaption,
+      showTab,
+      selectVenue,
+      hideDisclaimer() {
+        document.getElementById('disclaimer').classList.add('is-hidden');
+      },
+      showChatScene() {
+        document.getElementById('scene-window').classList.add('is-hidden');
+        document.getElementById('scene-chat').classList.add('is-visible');
+      },
+      toggle24h() {
+        const cb = document.getElementById('checkbox-24h');
+        cb.checked = !cb.checked;
+        apply24h(cb.checked);
+      },
+      toggleNotes() {
+        document.getElementById('chk-notes').click();
+        refreshExportPreview();
+      },
+      clickCopy() {
+        document.getElementById('btn-copy').click();
+      },
+    };
+  </script>
+</body>
+</html>
