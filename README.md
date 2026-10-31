@@ -1,5 +1,7 @@
 # Venue Ledger
 
+<img src="images/icon.png" width="96">
+
 Keeps FFXIV venues in one ledger and reads their hours against your own clock, for anyone tracking a
 schedule across timezones.
 
