@@ -1,11 +1,4 @@
 #!/usr/bin/env node
-/**
- * Renders docs/videos/mockup-walkthrough.mp4 and mockup-walkthrough.gif
- * from docs/videos/src/walkthrough.html via Playwright + ffmpeg.
- *
- * Usage:
- *   cd docs/videos/src && npm install && npx playwright install chromium && node render.mjs
- */
 import { chromium } from 'playwright';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -18,10 +11,6 @@ const outDir = path.join(__dirname, '..');
 const mp4Path = path.join(outDir, 'mockup-walkthrough.mp4');
 const gifPath = path.join(outDir, 'mockup-walkthrough.gif');
 const tmpDir = path.join(__dirname, '.render-tmp');
-
-function sleep(ms) {
-  return new Promise((r) => setTimeout(r, ms));
-}
 
 function runFfmpeg(args) {
   const result = spawnSync('ffmpeg', args, { encoding: 'utf8' });
@@ -48,60 +37,9 @@ const context = await browser.newContext({
 const page = await context.newPage();
 await page.goto('file://' + walkthroughHtml);
 await page.waitForTimeout(400);
-
-const steps = [
-  async () => {
-    await page.evaluate(() => window.__walkthrough.setCaption(''));
-    await sleep(4500);
-    await page.evaluate(() => window.__walkthrough.hideDisclaimer());
-    await sleep(1000);
-  },
-  async () => {
-    await page.evaluate(() =>
-      window.__walkthrough.setCaption('Ledger tab — filterable list, open/closed status, and venue editor'),
-    );
-    await sleep(3000);
-    await page.evaluate(() => window.__walkthrough.selectVenue('crystal'));
-    await sleep(2200);
-    await page.evaluate(() => window.__walkthrough.selectVenue('example'));
-    await sleep(1800);
-  },
-  async () => {
-    await page.evaluate(() => window.__walkthrough.showTab('board'));
-    await page.evaluate(() =>
-      window.__walkthrough.setCaption('Board tab — projected hours and Today day strip (crimson line = now)'),
-    );
-    await sleep(2800);
-    await page.evaluate(() => window.__walkthrough.toggle24h());
-    await sleep(1400);
-    await page.evaluate(() => window.__walkthrough.toggle24h());
-    await sleep(2200);
-  },
-  async () => {
-    await page.evaluate(() => window.__walkthrough.showTab('export'));
-    await page.evaluate(() =>
-      window.__walkthrough.setCaption('Export tab — toggles, live preview, Copy list / Save .txt'),
-    );
-    await sleep(2200);
-    await page.evaluate(() => window.__walkthrough.toggleNotes());
-    await sleep(1400);
-    await page.evaluate(() => window.__walkthrough.toggleNotes());
-    await sleep(1000);
-    await page.evaluate(() => window.__walkthrough.clickCopy());
-    await sleep(2500);
-  },
-  async () => {
-    await page.evaluate(() => window.__walkthrough.showChatScene());
-    await page.evaluate(() =>
-      window.__walkthrough.setCaption('`/venue` commands — list, copy, and export in Dalamud chat'),
-    );
-    await sleep(9000);
-  },
-];
-
-for (const step of steps) {
-  await step();
-}
+await page.evaluate(async () => {
+  await window.__walkthrough.playDemo();
+});
 
 await page.close();
 await context.close();

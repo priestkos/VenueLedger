@@ -24,9 +24,7 @@ These clips are **HTML mock-ups**, not recordings from the live game (same as th
 
 ![Mock-up walkthrough preview](docs/videos/mockup-walkthrough.gif)
 
-[Download mockup-walkthrough.mp4](docs/videos/mockup-walkthrough.mp4) (1280×720, ~38s)
-
-Regenerate: `cd docs/videos/src && npm install && npx playwright install chromium && node render.mjs`.
+[Download mockup-walkthrough.mp4](docs/videos/mockup-walkthrough.mp4) (1280×720, ~30s)
 
 ### Feature coverage (mock-ups)
 
