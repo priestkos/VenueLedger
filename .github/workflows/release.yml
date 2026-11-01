@@ -94,6 +94,7 @@ jobs:
             "skip=true" >> $env:GITHUB_OUTPUT
             exit 0
           }
+          $global:LASTEXITCODE = 0
 
           $releases = gh api "repos/$env:GITHUB_REPOSITORY/releases?per_page=100" | ConvertFrom-Json
           $commitRelease = @($releases | Where-Object { $_.target_commitish -eq $env:GITHUB_SHA } | Select-Object -First 1)[0]
@@ -105,6 +106,7 @@ jobs:
 
           "skip=false" >> $env:GITHUB_OUTPUT
           "version=$nextVersion" >> $env:GITHUB_OUTPUT
+          exit 0
 
       - name: Install the Dalamud development distribution
         if: github.event_name != 'push' || github.ref != 'refs/heads/main' || steps.auto.outputs.skip != 'true'
@@ -114,6 +116,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path $dest | Out-Null
           Invoke-WebRequest -UseBasicParsing -Uri 'https://goatcorp.github.io/dalamud-distrib/latest.zip' -OutFile dalamud.zip
           Expand-Archive -Path dalamud.zip -DestinationPath $dest -Force
+          exit 0
 
       - name: Build VenueLedger
         if: github.event_name != 'push' || github.ref != 'refs/heads/main' || steps.auto.outputs.skip != 'true'
@@ -128,6 +131,7 @@ jobs:
           } else {
             dotnet build VenueLedger.csproj -c Release
           }
+          exit 0
 
       - name: Create GitHub release
         if: github.event_name != 'push' || github.ref != 'refs/heads/main' || steps.auto.outputs.skip != 'true'
@@ -192,9 +196,11 @@ jobs:
           }
 
           $tag = "v$assemblyVersion"
-          $null = gh release view $tag 2>&1
+          gh release view $tag 2>$null | Out-Null
           if ($LASTEXITCODE -eq 0) {
             Write-Host "Release $tag already exists; skipping."
             exit 0
           }
+          $global:LASTEXITCODE = 0
           gh release create $tag $zip.FullName --title $tag --generate-notes
+          exit 0
