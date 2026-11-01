@@ -2,15 +2,30 @@ name: Release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'images/**'
+      - 'screenshots/**'
+      - '*.png'
+      - '*.mp4'
+      - '.github/workflows/build.yml'
   workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.repository }}
+  cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
   release:
+    if: github.event_name != 'pull_request'
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v7
@@ -19,7 +34,80 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
+      - name: Prepare automatic release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        id: auto
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          function Normalize-VersionFourPart([string]$Value) {
+            $parts = @($Value -split '\.')
+            while ($parts.Count -lt 4) { $parts += '0' }
+            return ($parts[0..3] -join '.')
+          }
+
+          function Compare-VersionFourPart([string]$Left, [string]$Right) {
+            $leftParts = (Normalize-VersionFourPart $Left) -split '\.' | ForEach-Object { [int]$_ }
+            $rightParts = (Normalize-VersionFourPart $Right) -split '\.' | ForEach-Object { [int]$_ }
+            for ($i = 0; $i -lt 4; $i++) {
+              if ($leftParts[$i] -lt $rightParts[$i]) { return -1 }
+              if ($leftParts[$i] -gt $rightParts[$i]) { return 1 }
+            }
+            return 0
+          }
+
+          function Increment-Revision([string]$Value) {
+            $parts = (Normalize-VersionFourPart $Value) -split '\.'
+            $parts[3] = [string]([int]$parts[3] + 1)
+            return ($parts -join '.')
+          }
+
+          $latestReleaseVersion = $null
+          $releaseTags = @(gh release list --limit 100 --json tagName --jq '.[].tagName')
+          foreach ($releaseTag in $releaseTags) {
+            $candidate = Normalize-VersionFourPart ($releaseTag -replace '^v', '')
+            if (-not $latestReleaseVersion -or (Compare-VersionFourPart $candidate $latestReleaseVersion) -gt 0) {
+              $latestReleaseVersion = $candidate
+            }
+          }
+
+          [xml]$project = Get-Content -Path VenueLedger.csproj
+          $csprojVersion = Normalize-VersionFourPart ([string]$project.Project.PropertyGroup.Version)
+
+          if (-not $latestReleaseVersion) {
+            $nextVersion = $csprojVersion
+          } elseif ((Compare-VersionFourPart $csprojVersion $latestReleaseVersion) -gt 0) {
+            $nextVersion = $csprojVersion
+          } else {
+            $nextVersion = Increment-Revision $latestReleaseVersion
+          }
+
+          Write-Host "Latest release version: $latestReleaseVersion"
+          Write-Host "Project version: $csprojVersion"
+          Write-Host "Next release version: $nextVersion"
+
+          $tag = "v$nextVersion"
+          gh release view $tag 2>$null | Out-Null
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "Release tag $tag already exists; skipping automatic release."
+            "skip=true" >> $env:GITHUB_OUTPUT
+            exit 0
+          }
+
+          $releases = gh api "repos/$env:GITHUB_REPOSITORY/releases?per_page=100" | ConvertFrom-Json
+          $commitRelease = @($releases | Where-Object { $_.target_commitish -eq $env:GITHUB_SHA } | Select-Object -First 1)[0]
+          if ($commitRelease) {
+            Write-Host "Commit $env:GITHUB_SHA already has release $($commitRelease.tag_name); skipping."
+            "skip=true" >> $env:GITHUB_OUTPUT
+            exit 0
+          }
+
+          "skip=false" >> $env:GITHUB_OUTPUT
+          "version=$nextVersion" >> $env:GITHUB_OUTPUT
+
       - name: Install the Dalamud development distribution
+        if: github.event_name != 'push' || github.ref != 'refs/heads/main' || steps.auto.outputs.skip != 'true'
         shell: pwsh
         run: |
           $dest = Join-Path $env:APPDATA 'XIVLauncher\addon\Hooks\dev'
@@ -28,9 +116,21 @@ jobs:
           Expand-Archive -Path dalamud.zip -DestinationPath $dest -Force
 
       - name: Build VenueLedger
-        run: dotnet build VenueLedger.csproj -c Release
+        if: github.event_name != 'push' || github.ref != 'refs/heads/main' || steps.auto.outputs.skip != 'true'
+        shell: pwsh
+        run: |
+          $version = '${{ steps.auto.outputs.version }}'
+          if ($version) {
+            dotnet build VenueLedger.csproj -c Release `
+              -p:Version=$version `
+              -p:AssemblyVersion=$version `
+              -p:FileVersion=$version
+          } else {
+            dotnet build VenueLedger.csproj -c Release
+          }
 
       - name: Create GitHub release
+        if: github.event_name != 'push' || github.ref != 'refs/heads/main' || steps.auto.outputs.skip != 'true'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -70,6 +170,16 @@ jobs:
             throw 'AssemblyVersion missing from plugin manifest'
           }
           Write-Host "Manifest AssemblyVersion: $assemblyVersion"
+
+          if ($env:GITHUB_EVENT_NAME -eq 'push' -and $env:GITHUB_REF -eq 'refs/heads/main') {
+            $expectedVersion = '${{ steps.auto.outputs.version }}'
+            if ($assemblyVersion -ne $expectedVersion) {
+              throw "Manifest AssemblyVersion $assemblyVersion does not match expected release version $expectedVersion"
+            }
+            $tag = "v$expectedVersion"
+            gh release create $tag $zip.FullName --target $env:GITHUB_SHA --generate-notes
+            exit 0
+          }
 
           if ($env:GITHUB_EVENT_NAME -eq 'push') {
             $tag = $env:GITHUB_REF_NAME
