@@ -14,7 +14,7 @@ Screenshots are mock-ups illustrating the UI, not captures from the live game.
 | | |
 | --- | --- |
 | ![Ledger tab — venue list and editor](docs/screenshots/01-ledger-tab.png) | **Ledger tab** — filterable list, open/closed status, full venue editor (fields, Lifestream travel, links, hours, schedule summary, notes), and footer actions. |
-| ![Board tab — projected hours and day strip](docs/screenshots/02-board-tab.png) | **Board tab** — all venues on one board clock with Hours / Your time / Length / Status columns and the **Today** day strip (crimson line = now). |
+| ![Board tab — projected hours and day strip](docs/screenshots/02-board-tab.png) | **Board tab** — all venues on one board clock with Hours / Your time / Length / Status columns and the **Today** day strip (filled = open session, line = now). |
 | ![Export tab — preview and output](docs/screenshots/03-export-tab.png) | **Export tab** — include travel/notes toggles, live preview, **Copy list** / **Save .txt**, and flash feedback. |
 | ![Slash commands — chat output](docs/screenshots/04-slash-commands.png) | **`/venue` commands** — `/venue help`, `/venue list`, `/venue copy`, and `/venue export` messages in chat (works with the window closed). |
 
@@ -32,7 +32,7 @@ These clips are **HTML mock-ups**, not recordings from the live game (same as th
 | --- | --- |
 | Header ticking clock + `system clock: …` hint | 01, 02, 03 |
 | Venue count + `compare in …` (board zone) | 01, 02, 03 |
-| **24h** checkbox (12/24-hour board times) | 01, 02, 03 |
+| **24h** checkbox on the Board tab (12/24-hour board times) | 02 |
 | Tabs: **Ledger** / **Board** / **Export** | 01 / 02 / 03 |
 | Ledger **filter**, selectable list, open/closed + countdown | 01 |
 | Editor: Name, Location, Address (world / district / ward / plot), Website & Discord **Open** / **Copy** | 01 |
@@ -96,13 +96,12 @@ These clips are **HTML mock-ups**, not recordings from the live game (same as th
 
 ## Settings
 
-- **Header** — `24h` switches every board time between 24- and 12-hour.
+- **Board tab** — `24h` switches every board time between 24- and 12-hour.
 - **Export tab** — whether the output carries the Lifestream command and the notes.
 - **Config file** — `BoardZone` (empty = system timezone) and `NewVenueZone` (the zone a new venue
   starts in, empty = system). Neither has an in-window picker.
-- **Theme** — smoke `#0a0507`, wine `#3d1a1f`, ember `#d05a26`, cream `#f6e2c6`, gold `#d9a94e`, with
-  dotted rules instead of solid separators and square corners. Colours are pushed with `ImRaii`
-  around this window's widgets only — **your global Dalamud style is untouched**, and nothing is
+- **Style** — no theme of its own: the window draws stock Dalamud widgets, so it looks like the rest
+  of your UI and your global Dalamud style / custom skin is what you see.
 
 ## Build
 
@@ -149,7 +148,6 @@ times × 7 closing times) and asserts each one produces a session that closes af
 ```
 Plugin.cs          entry point, commands, clipboard queue, export file
 MainWindow.cs      the window: Ledger / Board / Export
-Theme.cs           palette, dotted rules, ImRaii push scoped to this window
 Configuration.cs   persisted venues + preferences
 Venue.cs           the venue record, districts, Lifestream command building   (no Dalamud)
 Schedule.cs        timezones, parsing, sessions, status, board, exporter      (no Dalamud)

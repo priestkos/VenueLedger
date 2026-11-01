@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -17,10 +17,6 @@ namespace VenueLedger;
 /// </summary>
 public sealed class MainWindow : Window, IDisposable
 {
-    private const int TabLedger = 0;
-    private const int TabBoard = 1;
-    private const int TabExport = 2;
-
     private const string WindowId = "###VenueLedgerMain";
 
     private const int NameMax = 64;
@@ -35,7 +31,6 @@ public sealed class MainWindow : Window, IDisposable
 
     private static List<TimeZoneInfo>? allZones;
 
-    private int tab = TabLedger;
     private string zoneFilter = string.Empty;
     private string filter = string.Empty;
     private bool dirty;
@@ -71,9 +66,6 @@ public sealed class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
-        using var palette = KosMos.Push();
-        using var style = KosMos.PushStyle();
-
         var now = DateTimeOffset.UtcNow;
 
         // Typing saves on blur, but a window closed mid-word must not lose the edit: flush a
@@ -86,19 +78,32 @@ public sealed class MainWindow : Window, IDisposable
         var board = Board.Build(config.Venues, config.BoardZone, now, config.Use24Hour);
 
         DrawHeader(now, board);
-        DrawTabs();
 
-        switch (tab)
+        if (ImGui.BeginTabBar("##venueTabs"))
         {
-            case TabBoard:
-                DrawBoard(board);
-                break;
-            case TabExport:
-                DrawExport(board);
-                break;
-            default:
+            if (ImGui.BeginTabItem("Ledger"))
+            {
                 DrawLedger(board);
-                break;
+                ImGui.EndTabItem();
+            }
+            else if (confirmDelete)
+            {
+                confirmDelete = false;
+            }
+
+            if (ImGui.BeginTabItem("Board"))
+            {
+                DrawBoard(board);
+                ImGui.EndTabItem();
+            }
+
+            if (ImGui.BeginTabItem("Export"))
+            {
+                DrawExport(board);
+                ImGui.EndTabItem();
+            }
+
+            ImGui.EndTabBar();
         }
 
         DrawFooter();
@@ -108,23 +113,8 @@ public sealed class MainWindow : Window, IDisposable
 
     private void DrawHeader(DateTimeOffset now, BoardView board)
     {
-        var contentWidth = ImGui.GetContentRegionAvail().X;
         var local = TimeZoneInfo.ConvertTime(now, ZoneBook.System);
         var clock = local.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
-
-        KosMos.BigText("VENUE LEDGER", KosMos.InkSoft, 1.5f);
-
-        var clockWidth = ImGui.CalcTextSize(clock).X * 2.15f;
-        if (contentWidth > clockWidth + 80f)
-        {
-            ImGui.SameLine(contentWidth - clockWidth);
-            KosMos.BigText(clock, KosMos.Ink, 2.15f);
-        }
-        else
-        {
-            ImGui.Spacing();
-            KosMos.BigText(clock, KosMos.Ink, 2.15f);
-        }
 
         var systemClock = "system clock: " + ZoneBook.SystemDescription(now);
         var compare = config.Venues.Count == 0
@@ -133,55 +123,11 @@ public sealed class MainWindow : Window, IDisposable
               (config.Venues.Count == 1 ? " venue" : " venues") +
               " | compare in " + board.BoardZoneText;
 
-        KosMos.Hint(compare + "  |  " + systemClock);
-
-        KosMos.DottedRule(0.8f);
-    }
-
-    private void DrawTabs()
-    {
-        var contentWidth = ImGui.GetContentRegionAvail().X;
-
-        ImGui.Spacing();
-        TabButton("Ledger", TabLedger);
+        ImGui.TextUnformatted(clock);
         ImGui.SameLine();
-        TabButton("Board", TabBoard);
-        ImGui.SameLine();
-        TabButton("Export", TabExport);
+        ImGui.TextDisabled("your time  |  " + compare + "  |  " + systemClock);
 
-        ImGui.SameLine(contentWidth - 56f * ImGuiHelpers.GlobalScale);
-
-        var use24 = config.Use24Hour;
-        if (ImGui.Checkbox("24h", ref use24))
-        {
-            config.Use24Hour = use24;
-            Save();
-        }
-
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetTooltip("Show every time on this board as 24-hour or 12-hour.");
-        }
-
-        ImGui.Spacing();
-    }
-
-    private void TabButton(string label, int index)
-    {
-        var active = tab == index;
-        var text = active ? "[ " + label.ToUpperInvariant() + " ]" : label.ToUpperInvariant();
-
-        using var button = ImRaii.PushColor(ImGuiCol.Button, KosMos.Fade(KosMos.Ground, 0f));
-        using var hover = ImRaii.PushColor(ImGuiCol.ButtonHovered, KosMos.Raised);
-        using var activeColor = ImRaii.PushColor(ImGuiCol.ButtonActive, KosMos.Raised);
-        using var ink = ImRaii.PushColor(ImGuiCol.Text, active ? KosMos.InkSoft : KosMos.Dim);
-        using var border = ImRaii.PushStyle(ImGuiStyleVar.FrameBorderSize, 0f);
-
-        if (ImGui.Button(text))
-        {
-            tab = index;
-            confirmDelete = false;
-        }
+        ImGui.Separator();
     }
 
     // ------------------------------------------------------------------ ledger
@@ -207,12 +153,12 @@ public sealed class MainWindow : Window, IDisposable
 
     private void DrawVenueList()
     {
-        KosMos.Section("Ledger");
+        Section("Ledger");
 
         if (config.Venues.Count == 0)
         {
-            KosMos.Hint("No venues yet.");
-            KosMos.Hint("Press New venue to start one.");
+            ImGui.TextDisabled("No venues yet.");
+            ImGui.TextDisabled("Press New venue to start one.");
             return;
         }
 
@@ -236,16 +182,12 @@ public sealed class MainWindow : Window, IDisposable
             var status = Scheduler.Status(venue, now);
             var selected = config.SelectedId == venue.Id;
 
-            var nameColor = !status.Known ? KosMos.Dim : status.IsOpen ? KosMos.Live : KosMos.Ink;
-            using (ImRaii.PushColor(ImGuiCol.Text, nameColor))
+            if (ImGui.Selectable(venue.DisplayName + "##" + venue.Id, selected, ImGuiSelectableFlags.None,
+                    new Vector2(0, 0)))
             {
-                if (ImGui.Selectable(venue.DisplayName + "##" + venue.Id, selected, ImGuiSelectableFlags.None,
-                        new Vector2(0, 0)))
-                {
-                    config.SelectedId = venue.Id;
-                    confirmDelete = false;
-                    Save();
-                }
+                config.SelectedId = venue.Id;
+                confirmDelete = false;
+                Save();
             }
 
             var line = status.Known
@@ -263,15 +205,15 @@ public sealed class MainWindow : Window, IDisposable
             }
 
             ImGui.Indent(10f * ImGuiHelpers.GlobalScale);
-            KosMos.Hint(line);
-            if (detail.Length > 0) KosMos.Hint(detail);
+            ImGui.TextDisabled(line);
+            if (detail.Length > 0) ImGui.TextDisabled(detail);
             ImGui.Unindent(10f * ImGuiHelpers.GlobalScale);
             ImGui.Spacing();
         }
 
         if (shown == 0 && filter.Length > 0)
         {
-            KosMos.Hint("Nothing matches \"" + filter + "\".");
+            ImGui.TextDisabled("Nothing matches \"" + filter + "\".");
         }
     }
 
@@ -280,14 +222,14 @@ public sealed class MainWindow : Window, IDisposable
         var venue = config.Selected;
         if (venue is null)
         {
-            KosMos.Section("Venue");
-            KosMos.Hint("Select a venue on the left, or create one with New venue.");
+            Section("Venue");
+            ImGui.TextDisabled("Select a venue on the left, or create one with New venue.");
             return;
         }
 
         var row = board.Rows.FirstOrDefault(r => r.Venue.Id == venue.Id);
 
-        KosMos.Section("Venue");
+        Section("Venue");
 
         if (!ImGui.BeginTable("##venuefields", 2,
                 ImGuiTableFlags.SizingStretchProp | ImGuiTableFlags.PadOuterX))
@@ -389,7 +331,7 @@ public sealed class MainWindow : Window, IDisposable
             CommitEdit();
             if (ImGui.IsItemHovered()) ImGui.SetTooltip("Plot 1-60. 0 means unknown.");
 
-            KosMos.Hint("District, ward and plot are optional - they are only used to build the travel command.");
+            ImGui.TextDisabled("District, ward and plot are optional - they are only used to build the travel command.");
         });
 
         // ---- website
@@ -441,7 +383,7 @@ public sealed class MainWindow : Window, IDisposable
 
             if (!row.Known)
             {
-                ImGui.TextColored(KosMos.Crimson, row.Error);
+                ImGui.TextUnformatted(row.Error);
                 return;
             }
 
@@ -452,8 +394,8 @@ public sealed class MainWindow : Window, IDisposable
                        " " + ZoneBook.Label(boardZone) +
                        "   (" + row.LengthText + ")";
 
-            ImGui.TextColored(KosMos.Gold, text);
-            ImGui.TextColored(row.IsOpen ? KosMos.Live : KosMos.Dim, row.StatusText);
+            ImGui.TextUnformatted(text);
+            ImGui.TextUnformatted(row.StatusText);
         });
 
         // ---- notes
@@ -498,7 +440,7 @@ public sealed class MainWindow : Window, IDisposable
         if (open && row is { Known: true })
         {
             ImGui.SameLine();
-            ImGui.TextColored(KosMos.Dim, "(" + row.LengthText + " session)");
+            ImGui.TextDisabled("(" + row.LengthText + " session)");
         }
     }
 
@@ -600,11 +542,11 @@ public sealed class MainWindow : Window, IDisposable
 
         if (command is not null)
         {
-            ImGui.TextColored(KosMos.Gold, preview);
+            ImGui.TextUnformatted(preview);
         }
         else
         {
-            KosMos.Hint(preview);
+            ImGui.TextDisabled(preview);
         }
 
         ImGui.SameLine();
@@ -629,7 +571,7 @@ public sealed class MainWindow : Window, IDisposable
         ImGui.TableNextRow();
 
         ImGui.TableSetColumnIndex(0);
-        ImGui.TextColored(KosMos.Dim, label);
+        ImGui.TextDisabled(label);
 
         ImGui.TableSetColumnIndex(1);
         body();
@@ -645,12 +587,22 @@ public sealed class MainWindow : Window, IDisposable
         using var child = ImRaii.Child("##board", new Vector2(0, height), true);
         if (!child.Success) return;
 
-        KosMos.Section("Board");
-        KosMos.Hint("Every venue's hours projected onto " + board.BoardZoneText + ". The red line is now.");
+        Section("Board");
+
+        var use24 = config.Use24Hour;
+        if (ImGui.Checkbox("24h", ref use24))
+        {
+            config.Use24Hour = use24;
+            Save();
+        }
+
+        if (ImGui.IsItemHovered()) ImGui.SetTooltip("Show every time on this board as 24-hour or 12-hour.");
+
+        ImGui.TextDisabled("Every venue's hours projected onto " + board.BoardZoneText + ". The line marks now.");
 
         if (board.Rows.Count == 0)
         {
-            KosMos.Hint("Nothing to show yet - add a venue in the Ledger tab.");
+            ImGui.TextDisabled("Nothing to show yet - add a venue in the Ledger tab.");
             return;
         }
 
@@ -674,7 +626,7 @@ public sealed class MainWindow : Window, IDisposable
             ImGui.PushID(row.Venue.Id);
 
             ImGui.TableSetColumnIndex(0);
-            ImGui.TextColored(row.IsOpen ? KosMos.Live : KosMos.Ink, row.Venue.DisplayName);
+            ImGui.TextUnformatted(row.Venue.DisplayName);
 
             ImGui.TableSetColumnIndex(1);
             if (row.Known)
@@ -683,25 +635,25 @@ public sealed class MainWindow : Window, IDisposable
             }
             else
             {
-                ImGui.TextColored(KosMos.Dim, "-");
+                ImGui.TextUnformatted("-");
             }
 
             ImGui.TableSetColumnIndex(2);
             if (row.Known)
             {
-                ImGui.TextColored(KosMos.Gold, row.BoardOpenText + "-" + row.BoardCloseText +
-                                               (row.BoardDayText.Length > 0 ? " " + row.BoardDayText : string.Empty));
+                ImGui.TextUnformatted(row.BoardOpenText + "-" + row.BoardCloseText +
+                                      (row.BoardDayText.Length > 0 ? " " + row.BoardDayText : string.Empty));
             }
             else
             {
-                ImGui.TextColored(KosMos.Dim, row.Error);
+                ImGui.TextUnformatted(row.Error);
             }
 
             ImGui.TableSetColumnIndex(3);
-            ImGui.TextColored(KosMos.Dim, row.Known ? row.LengthText : "-");
+            ImGui.TextUnformatted(row.Known ? row.LengthText : "-");
 
             ImGui.TableSetColumnIndex(4);
-            ImGui.TextColored(row.IsOpen ? KosMos.Live : KosMos.Dim, row.StatusText);
+            ImGui.TextUnformatted(row.StatusText);
 
             ImGui.TableSetColumnIndex(5);
             DrawDayStrip(row, board, 160f * scale, 16f * scale);
@@ -721,8 +673,8 @@ public sealed class MainWindow : Window, IDisposable
         var topLeft = pos;
         var bottomRight = pos + new Vector2(width, height);
 
-        draw.AddRectFilled(topLeft, bottomRight, KosMos.U32(KosMos.Fade(KosMos.Raised, 0.75f)));
-        draw.AddRect(topLeft, bottomRight, KosMos.U32(KosMos.Line));
+        draw.AddRectFilled(topLeft, bottomRight, ImGui.GetColorU32(ImGuiCol.FrameBg));
+        draw.AddRect(topLeft, bottomRight, ImGui.GetColorU32(ImGuiCol.Border));
 
         var span = (board.DayEnd - board.DayStart).TotalSeconds;
         if (span <= 0) return;
@@ -731,7 +683,7 @@ public sealed class MainWindow : Window, IDisposable
         {
             var x = pos.X + width * hour / 24f;
             draw.AddLine(new Vector2(x, topLeft.Y + 1f), new Vector2(x, bottomRight.Y - 1f),
-                KosMos.U32(KosMos.Fade(KosMos.Line, 0.9f)));
+                ImGui.GetColorU32(ImGuiCol.Separator));
         }
 
         foreach (var (start, end) in row.Segments)
@@ -742,15 +694,15 @@ public sealed class MainWindow : Window, IDisposable
             var to = new Vector2(topLeft.X + Math.Clamp(x1, 1f, width), bottomRight.Y - 2f);
             if (to.X <= from.X) continue;
 
-            var color = row.IsOpen ? KosMos.Gold : KosMos.Ember;
-            draw.AddRectFilled(from, to, KosMos.U32(KosMos.Fade(color, 0.8f)));
+            // Open sessions take the accent, closed ones stay grey - the palette that used to say this is gone.
+            draw.AddRectFilled(from, to, ImGui.GetColorU32(row.IsOpen ? ImGuiCol.ButtonActive : ImGuiCol.ButtonHovered));
         }
 
         var nowX = (float)((board.Now - board.DayStart).TotalSeconds / span) * width;
         if (nowX is >= 0f && nowX <= width)
         {
             draw.AddLine(new Vector2(topLeft.X + nowX, topLeft.Y), new Vector2(topLeft.X + nowX, bottomRight.Y),
-                KosMos.U32(KosMos.Crimson), 1.5f);
+                ImGui.GetColorU32(ImGuiCol.Text), 1.5f);
         }
     }
 
@@ -767,7 +719,7 @@ public sealed class MainWindow : Window, IDisposable
 
         var text = Exporter.Build(board, options);
 
-        KosMos.Section("Export");
+        Section("Export");
 
         var includeTravel = config.IncludeTravelInExport;
         if (ImGui.Checkbox("Include travel commands", ref includeTravel))
@@ -785,7 +737,7 @@ public sealed class MainWindow : Window, IDisposable
         }
 
         ImGui.SameLine();
-        KosMos.Hint("24-hour is set on the board.");
+        ImGui.TextDisabled("24-hour is set on the board.");
 
         ImGui.Spacing();
 
@@ -796,12 +748,9 @@ public sealed class MainWindow : Window, IDisposable
         {
             if (preview.Success)
             {
-                using (ImRaii.PushColor(ImGuiCol.Text, KosMos.Ink))
-                {
-                    ImGui.PushTextWrapPos(0f);
-                    ImGui.TextUnformatted(text);
-                    ImGui.PopTextWrapPos();
-                }
+                ImGui.PushTextWrapPos(0f);
+                ImGui.TextUnformatted(text);
+                ImGui.PopTextWrapPos();
             }
         }
 
@@ -830,7 +779,7 @@ public sealed class MainWindow : Window, IDisposable
         if (lastExportPath.Length > 0)
         {
             ImGui.SameLine();
-            KosMos.Hint(lastExportPath);
+            ImGui.TextDisabled(lastExportPath);
         }
     }
 
@@ -839,7 +788,7 @@ public sealed class MainWindow : Window, IDisposable
     private void DrawFooter()
     {
         ImGui.Spacing();
-        KosMos.DottedRule(0.5f);
+        ImGui.Separator();
 
         var scale = ImGuiHelpers.GlobalScale;
 
@@ -894,17 +843,25 @@ public sealed class MainWindow : Window, IDisposable
         if (dirty)
         {
             ImGui.SameLine();
-            KosMos.Hint("unsaved");
+            ImGui.TextDisabled("unsaved");
         }
 
         if (flash.Length > 0 && DateTime.UtcNow < flashUntil)
         {
             ImGui.SameLine();
-            ImGui.TextColored(KosMos.Gold, flash);
+            ImGui.TextUnformatted(flash);
         }
     }
 
     // ------------------------------------------------------------------ helpers
+
+    /// <summary>Section heading in the stock style - these bindings ship no SeparatorText.</summary>
+    private static void Section(string label)
+    {
+        ImGui.Spacing();
+        ImGui.TextUnformatted(label);
+        ImGui.Separator();
+    }
 
     private void MarkDirty()
     {
