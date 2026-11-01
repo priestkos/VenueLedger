@@ -113,6 +113,8 @@ dotnet build -c Debug      # load bin/Debug/VenueLedger.dll as a dev plugin
 dotnet build -c Release    # zip in bin/Release/VenueLedger/latest.zip
 ```
 
+Releases are created automatically on each push to `main` that changes the plugin binary; the version is the next four-part number above the latest GitHub release (or the project version when it is higher).
+
 ## Install (dev plugin)
 
 1. `/xlsettings` → Experimental → Dev Plugin Locations → add `bin\Debug\VenueLedger.dll`.
