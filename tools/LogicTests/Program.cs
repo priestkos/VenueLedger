@@ -34,7 +34,11 @@ internal static class Program
         CrossZoneClose();
         Statuses();
         BoardConversion();
+        BoardDstDays();
+        DaylightLabels();
+        LinkSchemes();
         ExportText();
+        ExportPaths();
         InvariantSweep();
 
         Console.WriteLine();
@@ -507,6 +511,102 @@ internal static class Program
         // 12 hour board reads 12-hour clock text.
         var twelve = Board.Build(new List<Venue> { jst }, "Asia/Kolkata", Now, false);
         Eq(twelve.Rows[0].BoardOpenText, "4:30 PM", "12-hour board clock");
+    }
+
+    /// <summary>The board day runs midnight to midnight in the board zone, so DST change days are 25 or 23 hours.</summary>
+    private static void BoardDstDays()
+    {
+        Section("board day across DST");
+
+        var lateNight = new Venue
+        {
+            Name = "Night Owl",
+            OpenTime = "20:00",
+            CloseTime = "02:00",
+            OpenZone = "America/New_York",
+            CloseZone = "America/New_York",
+        };
+
+        var fallBack = Board.Build(new List<Venue> { lateNight }, "America/New_York",
+            new DateTimeOffset(2026, 11, 1, 15, 0, 0, TimeSpan.Zero), true);
+        Eq(fallBack.DayStart, new DateTimeOffset(2026, 11, 1, 4, 0, 0, TimeSpan.Zero), "NY 2026-11-01 starts at 04:00Z (EDT midnight)");
+        Eq(fallBack.DayEnd, new DateTimeOffset(2026, 11, 2, 5, 0, 0, TimeSpan.Zero), "NY 2026-11-01 ends at 05:00Z (EST midnight)");
+        Eq((fallBack.DayEnd - fallBack.DayStart).TotalHours, 25d, "fall-back day is 25 hours");
+        Ok(fallBack.Rows[0].Segments.Any(s => s.End == fallBack.DayEnd),
+            "the 20:00 session runs to the strip's real midnight, not an hour short");
+
+        var springForward = Board.Build(new List<Venue> { lateNight }, "America/New_York",
+            new DateTimeOffset(2026, 3, 8, 15, 0, 0, TimeSpan.Zero), true);
+        Eq(springForward.DayStart, new DateTimeOffset(2026, 3, 8, 5, 0, 0, TimeSpan.Zero), "NY 2026-03-08 starts at 05:00Z (EST midnight)");
+        Eq(springForward.DayEnd, new DateTimeOffset(2026, 3, 9, 4, 0, 0, TimeSpan.Zero), "NY 2026-03-08 ends at 04:00Z (EDT midnight)");
+        Eq((springForward.DayEnd - springForward.DayStart).TotalHours, 23d, "spring-forward day is 23 hours");
+
+        var normal = Board.Build(new List<Venue> { lateNight }, "America/New_York",
+            new DateTimeOffset(2026, 10, 27, 15, 0, 0, TimeSpan.Zero), true);
+        Eq(normal.DayStart, new DateTimeOffset(2026, 10, 27, 4, 0, 0, TimeSpan.Zero), "a normal NY day still starts at local midnight");
+        Eq((normal.DayEnd - normal.DayStart).TotalHours, 24d, "a normal day is 24 hours");
+
+        var ny = ZoneBook.Resolve("America/New_York");
+        Eq(ZoneBook.AtLocal(new DateTime(2026, 11, 1, 1, 30, 0), ny), new DateTimeOffset(2026, 11, 1, 5, 30, 0, TimeSpan.Zero),
+            "a repeated 01:30 is its first (EDT) occurrence");
+        Eq(ZoneBook.AtLocal(new DateTime(2026, 3, 8, 2, 30, 0), ny), new DateTimeOffset(2026, 3, 8, 7, 30, 0, TimeSpan.Zero),
+            "a skipped 02:30 lands just after the gap");
+    }
+
+    private static void DaylightLabels()
+    {
+        Section("daylight labels");
+
+        var july = new DateTimeOffset(2026, 7, 15, 12, 0, 0, TimeSpan.Zero);
+        var january = new DateTimeOffset(2026, 1, 15, 12, 0, 0, TimeSpan.Zero);
+        var london = ZoneBook.Resolve("Europe/London");
+        var sydney = ZoneBook.Resolve("Australia/Sydney");
+        var newYork = ZoneBook.Resolve("America/New_York");
+
+        Eq(ZoneBook.Label(london, july), "BST", "London in July is BST");
+        Eq(ZoneBook.Label(london, january), "GMT", "London in January is GMT");
+        Eq(ZoneBook.Label(sydney, january), "AEDT", "Sydney in January is AEDT");
+        Eq(ZoneBook.Label(sydney, july), "AEST", "Sydney in July is AEST");
+        Eq(ZoneBook.Label(newYork, july), "ET", "generic ET needs no summer form");
+        Ok(ZoneBook.Describe(london, july).StartsWith("BST", StringComparison.Ordinal), "Describe uses the instant's label");
+    }
+
+    private static void LinkSchemes()
+    {
+        Section("link schemes");
+
+        Eq(Links.Normalize("venue.example"), "https://venue.example/", "a bare host gains https://");
+        Eq(Links.Normalize(" http://venue.example/menu "), "http://venue.example/menu", "http passes");
+        Eq(Links.Normalize("discord://discord.com/invite/abc"), "discord://discord.com/invite/abc", "discord:// passes");
+        Eq(Links.Normalize("file:///C:/Windows/notepad.exe"), null, "file:// is refused");
+        Eq(Links.Normalize("httpx:payload"), null, "an 'http'-prefixed non-URL is refused");
+        Eq(Links.Normalize("javascript:alert(1)"), null, "javascript: is refused");
+        Eq(Links.Normalize("   "), null, "blank is refused");
+    }
+
+    private static void ExportPaths()
+    {
+        Section("export paths");
+
+        Eq(Exporter.FileName(new DateTimeOffset(2026, 10, 27, 9, 5, 7, TimeSpan.Zero)).Length,
+            "venues-yyyyMMdd-HHmmss.txt".Length, "file name carries seconds");
+
+        var dir = System.IO.Directory.CreateTempSubdirectory("venueledger-").FullName;
+        try
+        {
+            var first = Exporter.UniquePath(dir, "venues-x.txt");
+            Eq(System.IO.Path.GetFileName(first), "venues-x.txt", "a free name is used as-is");
+            System.IO.File.WriteAllText(first, "1");
+            var second = Exporter.UniquePath(dir, "venues-x.txt");
+            Eq(System.IO.Path.GetFileName(second), "venues-x-2.txt", "a taken name gets -2");
+            System.IO.File.WriteAllText(second, "2");
+            Eq(System.IO.Path.GetFileName(Exporter.UniquePath(dir, "venues-x.txt")), "venues-x-3.txt", "then -3");
+            Eq(System.IO.File.ReadAllText(first), "1", "the earlier export is untouched");
+        }
+        finally
+        {
+            System.IO.Directory.Delete(dir, true);
+        }
     }
 
     // ------------------------------------------------------------------ export

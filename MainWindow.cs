@@ -391,7 +391,7 @@ public sealed class MainWindow : Window, IDisposable
             var text = row.OwnOpenText + "-" + row.OwnCloseText + " " + row.OwnZoneText +
                        "   ->   " + row.BoardOpenText + "-" + row.BoardCloseText +
                        (row.BoardDayText.Length > 0 ? row.BoardDayText : string.Empty) +
-                       " " + ZoneBook.Label(boardZone) +
+                       " " + ZoneBook.Label(boardZone, board.Now) +
                        "   (" + row.LengthText + ")";
 
             ImGui.TextUnformatted(text);
@@ -679,9 +679,12 @@ public sealed class MainWindow : Window, IDisposable
         var span = (board.DayEnd - board.DayStart).TotalSeconds;
         if (span <= 0) return;
 
+        // Gridlines at real local 06/12/18, which drift off the quarter marks on a 23 or 25 hour day.
+        var boardDate = TimeZoneInfo.ConvertTime(board.DayStart, board.BoardZone).Date;
         for (var hour = 6; hour < 24; hour += 6)
         {
-            var x = pos.X + width * hour / 24f;
+            var at = ZoneBook.AtLocal(boardDate.AddHours(hour), board.BoardZone);
+            var x = pos.X + width * (float)((at - board.DayStart).TotalSeconds / span);
             draw.AddLine(new Vector2(x, topLeft.Y + 1f), new Vector2(x, bottomRight.Y - 1f),
                 ImGui.GetColorU32(ImGuiCol.Separator));
         }
@@ -895,11 +898,11 @@ public sealed class MainWindow : Window, IDisposable
             return;
         }
 
-        var target = url.Trim();
-        if (!target.StartsWith("http", StringComparison.OrdinalIgnoreCase) &&
-            !target.StartsWith("discord://", StringComparison.OrdinalIgnoreCase))
+        var target = Links.Normalize(url);
+        if (target is null)
         {
-            target = "https://" + target;
+            Flash("Only web (http/https) and discord:// links open.");
+            return;
         }
 
         try

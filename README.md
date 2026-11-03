@@ -73,7 +73,7 @@ These clips are **HTML mock-ups**, not recordings from the live game (same as th
   help documents — `/li lavender 1 30`, or `/li mateus lavender 12 30` across worlds — and copies it
   in one click.
 - **Output**: the Export tab previews the exact text, then copies it to the clipboard or writes
-  `venues-YYYYMMDD-HHmm.txt` next to the plugin config.
+  `venues-YYYYMMDD-HHmmss.txt` (`-2`, `-3`… if that name is taken) next to the plugin config.
 
 ## How it works
 
@@ -127,7 +127,7 @@ Releases are created automatically on each push to `main` that changes the plugi
 logic with no game and no dev distrib:
 
 ```
-dotnet run --project tools/LogicTests -c Release          # 173 checks
+dotnet run --project tools/LogicTests -c Release          # 202 checks
 dotnet run --project tools/LogicTests -c Release -- --show # a real export, printed
 ```
 

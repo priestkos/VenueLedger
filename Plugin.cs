@@ -146,7 +146,7 @@ public sealed class Plugin : IDalamudPlugin
                     return;
                 }
 
-                var label = ZoneBook.Label(board.BoardZone);
+                var label = ZoneBook.Label(board.BoardZone, board.Now);
                 foreach (var row in board.Rows)
                 {
                     var hours = row.Known
@@ -179,7 +179,7 @@ public sealed class Plugin : IDalamudPlugin
             var directory = PluginInterface.GetPluginConfigDirectory();
             Directory.CreateDirectory(directory);
 
-            var path = Path.Combine(directory, Exporter.FileName(DateTimeOffset.UtcNow));
+            var path = Exporter.UniquePath(directory, Exporter.FileName(DateTimeOffset.UtcNow));
             File.WriteAllText(path, text, new UTF8Encoding(false));
 
             Log.Info("[VenueLedger] exported to " + path);

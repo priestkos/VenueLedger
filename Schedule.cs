@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -73,6 +74,24 @@ public static class ZoneBook
         ["Africa/Johannesburg"] = "SAST",
         ["Africa/Cairo"] = "EET",
         ["Africa/Lagos"] = "WAT",
+    };
+
+    /// <summary>Summer labels for the table's fixed-standard entries; the generic US/Atlantic labels need none.</summary>
+    private static readonly Dictionary<string, string> DaylightAbbreviations = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["Europe/London"] = "BST",
+        ["Europe/Lisbon"] = "WEST",
+        ["Europe/Paris"] = "CEST",
+        ["Europe/Berlin"] = "CEST",
+        ["Europe/Madrid"] = "CEST",
+        ["Europe/Rome"] = "CEST",
+        ["Europe/Stockholm"] = "CEST",
+        ["Europe/Warsaw"] = "CEST",
+        ["Europe/Athens"] = "EEST",
+        ["Africa/Cairo"] = "EEST",
+        ["Australia/Adelaide"] = "ACDT",
+        ["Australia/Sydney"] = "AEDT",
+        ["Pacific/Auckland"] = "NZDT",
     };
 
     private static readonly Dictionary<string, TimeZoneInfo?> Cache = new(StringComparer.OrdinalIgnoreCase);
@@ -173,11 +192,18 @@ public static class ZoneBook
     public static string PersistId(TimeZoneInfo zone) =>
         zone.Id == TimeZoneInfo.Local.Id ? string.Empty : IanaId(zone);
 
-    public static string Label(TimeZoneInfo zone)
+    /// <summary>Short label for the zone at <paramref name="at"/> (default: now), so London reads BST in summer.</summary>
+    public static string Label(TimeZoneInfo zone, DateTimeOffset? at = null)
     {
         var iana = IanaId(zone);
-        if (Abbreviations.TryGetValue(iana, out var abbr)) return abbr;
-        if (Abbreviations.TryGetValue(zone.Id, out var windowsAbbr)) return windowsAbbr;
+        var key = Abbreviations.ContainsKey(iana) ? iana : zone.Id;
+        if (Abbreviations.TryGetValue(key, out var abbr))
+        {
+            return zone.IsDaylightSavingTime(at ?? DateTimeOffset.UtcNow) &&
+                   DaylightAbbreviations.TryGetValue(key, out var summer)
+                ? summer
+                : abbr;
+        }
 
         var slashed = iana.LastIndexOf('/');
         return slashed >= 0 && slashed + 1 < iana.Length ? iana[(slashed + 1)..] : iana;
@@ -193,7 +219,18 @@ public static class ZoneBook
 
     /// <summary>"JST · Asia/Tokyo UTC+09:00" - the label alone hides DST, so the offset is always shown.</summary>
     public static string Describe(TimeZoneInfo zone, DateTimeOffset at) =>
-        Label(zone) + " · " + IanaId(zone) + " UTC" + OffsetText(zone, at);
+        Label(zone, at) + " · " + IanaId(zone) + " UTC" + OffsetText(zone, at);
+
+    /// <summary>
+    /// The instant a local wall-clock time names in <paramref name="zone"/>: a skipped time takes the standard
+    /// offset (the first instant after the gap), a repeated one takes its first occurrence.
+    /// </summary>
+    public static DateTimeOffset AtLocal(DateTime local, TimeZoneInfo zone)
+    {
+        local = DateTime.SpecifyKind(local, DateTimeKind.Unspecified);
+        var offset = zone.IsAmbiguousTime(local) ? zone.GetAmbiguousTimeOffsets(local).Max() : zone.GetUtcOffset(local);
+        return new DateTimeOffset(local, offset);
+    }
 
     public static bool SameZone(TimeZoneInfo a, TimeZoneInfo b) =>
         string.Equals(a.Id, b.Id, StringComparison.OrdinalIgnoreCase);
@@ -581,8 +618,9 @@ public static class Board
     {
         var boardZone = ZoneBook.Resolve(boardZoneId);
         var localNow = TimeZoneInfo.ConvertTime(now, boardZone);
-        var dayStart = new DateTimeOffset(localNow.Date, boardZone.GetUtcOffset(localNow));
-        var dayEnd = dayStart.AddDays(1);
+        // Both ends from their own midnight: a DST change day is 23 or 25 hours long.
+        var dayStart = ZoneBook.AtLocal(localNow.Date, boardZone);
+        var dayEnd = ZoneBook.AtLocal(localNow.Date.AddDays(1), boardZone);
 
         var rows = new List<VenueRow>(venues.Count);
         foreach (var venue in venues)
@@ -640,8 +678,8 @@ public static class Board
         }
 
         var ownZoneText = ZoneBook.SameZone(openZone, closeZone)
-            ? ZoneBook.Label(openZone)
-            : ZoneBook.Label(openZone) + " -> " + ZoneBook.Label(closeZone);
+            ? ZoneBook.Label(openZone, session.Opens)
+            : ZoneBook.Label(openZone, session.Opens) + " -> " + ZoneBook.Label(closeZone, session.Closes);
 
         return new VenueRow
         {
@@ -743,7 +781,7 @@ public static class Exporter
                     .Append("  ->  ")
                     .Append(row.BoardOpenText).Append('-').Append(row.BoardCloseText)
                     .Append(row.BoardDayText.Length > 0 ? " " + row.BoardDayText : string.Empty)
-                    .Append(' ').Append(ZoneBook.Label(board.BoardZone))
+                    .Append(' ').Append(ZoneBook.Label(board.BoardZone, board.Now))
                     .Append("  (").Append(row.LengthText).Append(')')
                     .AppendLine();
             }
@@ -773,5 +811,18 @@ public static class Exporter
 
     /// <summary>File name for an export: sortable, no spaces, no colon (which Windows rejects).</summary>
     public static string FileName(DateTimeOffset now) =>
-        "venues-" + TimeZoneInfo.ConvertTime(now, ZoneBook.System).ToString("yyyyMMdd-HHmm", CultureInfo.InvariantCulture) + ".txt";
+        "venues-" + TimeZoneInfo.ConvertTime(now, ZoneBook.System).ToString("yyyyMMdd-HHmmss", CultureInfo.InvariantCulture) + ".txt";
+
+    /// <summary><paramref name="fileName"/> in <paramref name="directory"/>, suffixed -2, -3... until no file has that name.</summary>
+    public static string UniquePath(string directory, string fileName)
+    {
+        var path = Path.Combine(directory, fileName);
+        for (var n = 2; File.Exists(path); n++)
+        {
+            path = Path.Combine(directory, Path.GetFileNameWithoutExtension(fileName) + "-" +
+                                           n.ToString(CultureInfo.InvariantCulture) + Path.GetExtension(fileName));
+        }
+
+        return path;
+    }
 }

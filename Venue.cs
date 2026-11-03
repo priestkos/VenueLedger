@@ -107,6 +107,22 @@ public static class Districts
     }
 }
 
+/// <summary>Gatekeeper for the Open buttons: the result goes to shell execute, so only known schemes pass.</summary>
+public static class Links
+{
+    /// <summary>A bare "venue.com" gains https://; anything that is not an absolute http, https or discord URL is null.</summary>
+    public static string? Normalize(string? url)
+    {
+        var target = url?.Trim() ?? string.Empty;
+        if (target.Length == 0) return null;
+        if (!target.Contains("://", StringComparison.Ordinal)) target = "https://" + target;
+
+        return Uri.TryCreate(target, UriKind.Absolute, out var uri) && uri.Scheme is "http" or "https" or "discord"
+            ? uri.AbsoluteUri
+            : null;
+    }
+}
+
 /// <summary>Builds the Lifestream chat command for a venue's address.</summary>
 public static class Travel
 {
