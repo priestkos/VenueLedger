@@ -7,6 +7,8 @@ schedule across timezones.
 
 `/venue` · Dalamud API 15 · .NET 10
 
+> **No support will be provided. This software is to be used as is, without warranty of any kind.**
+
 ## Screenshots
 
 Screenshots are mock-ups illustrating the UI, not captures from the live game.
