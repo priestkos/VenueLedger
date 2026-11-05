@@ -6,21 +6,22 @@
   <link rel="stylesheet" href="theme.css" />
 </head>
 <body>
+  <div class="mockup-banner">Mock-up</div>
+  <div class="scene-label">Export tab — include travel/notes toggles, live preview, Copy list / Save .txt</div>
   <div class="scene-backdrop"></div>
   <div class="imgui-window">
     <div class="title-bar">Venue Ledger</div>
     <div class="window-body">
-      <span class="big-title">VENUE LEDGER</span>
-      <span class="big-clock">19:42:08</span>
-      <div class="hint">3 venues | compare in UTC · system clock: UTC · UTC UTC+00:00</div>
-      <div class="dotted-rule"></div>
+      <div class="header-row">
+        <span class="header-clock">19:42:08</span>
+        <span class="header-meta">your time  |  3 venues | compare in UTC  |  system clock: UTC · UTC UTC+00:00</span>
+      </div>
+      <div class="header-separator"></div>
 
       <div class="tabs-row">
         <button class="tab">LEDGER</button>
         <button class="tab">BOARD</button>
         <button class="tab active">[ EXPORT ]</button>
-        <span class="tab-spacer"></span>
-        <label class="checkbox-row"><input type="checkbox" checked /> 24h</label>
       </div>
 
       <div class="section-label">Export</div>
