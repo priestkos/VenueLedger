@@ -26,7 +26,7 @@ These clips are **HTML mock-ups**, not recordings from the live game (same as th
 
 ![Mock-up walkthrough preview](docs/videos/mockup-walkthrough.gif)
 
-[Download mockup-walkthrough.mp4](docs/videos/mockup-walkthrough.mp4) (1280×720, ~30s)
+[Download mockup-walkthrough.mp4](docs/videos/mockup-walkthrough.mp4) (1280×720, ~15s)
 
 ### Feature coverage (mock-ups)
 
