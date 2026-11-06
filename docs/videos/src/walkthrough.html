@@ -13,249 +13,238 @@
     <div class="beat-title" id="beat-ledger">Ledger tab</div>
     <div class="scene-backdrop"></div>
     <div class="imgui-window walk-window">
-      <div class="title-bar">Venue Ledger</div>
-      <div class="window-body">
-        <div class="header-row">
-          <span class="header-clock">19:42:08</span>
-          <span class="header-meta">your time  |  3 venues | compare in UTC  |  system clock: UTC · UTC UTC+00:00</span>
-        </div>
-        <div class="header-separator"></div>
-        <div class="tabs-row">
-          <button type="button" class="tab active">[ LEDGER ]</button>
-          <button type="button" class="tab">BOARD</button>
-          <button type="button" class="tab">EXPORT</button>
-        </div>
-        <div class="panel-row">
-          <div class="child-panel panel-list">
-            <div class="section-label">Ledger</div>
-            <input class="input-hint" value="" placeholder="filter" readonly />
-            <div class="venue-item selected">
-              <div class="venue-name live">Example Character's Lounge</div>
-              <div class="venue-sub">open - closes in 4h 12m</div>
-              <div class="venue-sub">20:00-02:00 your time</div>
-            </div>
-            <div class="venue-item">
-              <div class="venue-name closed">Crystal Stage</div>
-              <div class="venue-sub">closed - opens in 2h 30m</div>
-            </div>
+    <div class="title-bar">Venue Ledger</div>
+    <div class="window-body">
+      <div class="header-row">
+        <span class="header-clock">12:48:00</span>
+        <span class="header-meta">your time  |  3 venues | compare in UTC · UTC UTC+00:00  |  system clock: UTC · UTC UTC+00:00</span>
+      </div>
+      <div class="header-separator"></div>
+      <div class="tabs-row">
+        <button type="button" class="tab active">Ledger</button>
+        <button type="button" class="tab">Board</button>
+        <button type="button" class="tab">Export</button>
+      </div>
+      <div class="panel-row">
+        <div class="child-panel panel-list">
+          <div class="section-label">Ledger</div>
+          <input class="input-hint" value="" placeholder="filter" readonly />
+          <div class="venue-item selected">
+            <div class="venue-name">Example Character's Lounge</div>
+            <div class="venue-sub">open - closes in 4h 12m</div>
+            <div class="venue-sub">11:00-17:00 your time</div>
           </div>
-          <div class="child-panel panel-main">
-            <div class="section-label">Venue</div>
-            <table class="field-table">
-              <tr>
-                <td class="field-label">Name</td>
-                <td><input class="field-input" value="Example Character's Lounge" readonly /></td>
-              </tr>
-              <tr>
-                <td class="field-label">Location</td>
-                <td>
-                  <input class="field-input" value="Ward 12, Plot 30, Lavender Beds, Mateus" readonly />
-                  <div class="inline-row" style="margin-top:6px">
-                    <span class="gold-text">/li mateus lavender 12 30</span>
-                    <button type="button" class="btn">Copy travel</button>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td class="field-label">Schedule</td>
-                <td>
-                  <div class="gold-text">20:00-02:00 JST   -&gt;   11:00-17:00 UTC   (6h)</div>
-                  <div class="live-text">open - closes in 4h 12m</div>
-                </td>
-              </tr>
-            </table>
+          <div class="venue-item">
+            <div class="venue-name">Crystal Stage</div>
+            <div class="venue-sub">closed - opens in 7h 12m</div>
+            <div class="venue-sub">20:00-00:00 your time</div>
+          </div>
+          <div class="venue-item">
+            <div class="venue-name">Harbor Cafe</div>
+            <div class="venue-sub">closed - opens in 12h 12m</div>
+            <div class="venue-sub">01:00-05:00 your time</div>
           </div>
         </div>
-        <div class="footer">
-          <button type="button" class="btn">New venue</button>
-          <button type="button" class="btn">Duplicate</button>
-          <button type="button" class="btn">Delete</button>
+        <div class="child-panel panel-main">
+          <div class="section-label">Venue</div>
+          <table class="field-table">
+            <tr><td class="field-label">Name</td><td><input class="field-input" value="Example Character's Lounge" readonly /></td></tr>
+            <tr>
+              <td class="field-label">Location</td>
+              <td>
+                <input class="field-input" value="Ward 12, Plot 30, Lavender Beds, Mateus" readonly />
+                <div class="inline-row" style="margin-top:4px"><span>/li mateus lavender 12 30</span><button type="button" class="btn">Copy travel</button></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="field-label">Address</td>
+              <td>
+                <div class="inline-row">
+                  <input class="field-input small" style="width:110px" value="Mateus" readonly />
+                  <select class="field-input small" style="width:140px"><option>Lavender Beds</option></select>
+                  <span class="input-int"><input class="field-input" value="12" readonly /><button type="button" class="btn">-</button><button type="button" class="btn">+</button></span>
+                  <span class="input-int"><input class="field-input" value="30" readonly /><button type="button" class="btn">-</button><button type="button" class="btn">+</button></span>
+                </div>
+                <div class="hint" style="margin-top:3px">District, ward and plot are optional - they are only used to build the travel command.</div>
+              </td>
+            </tr>
+            <tr>
+              <td class="field-label">Website</td>
+              <td><div class="inline-row"><input class="field-input" style="flex:1" value="https://example.test/venue" readonly /><button type="button" class="btn">Open</button><button type="button" class="btn">Copy</button></div></td>
+            </tr>
+            <tr>
+              <td class="field-label">Discord</td>
+              <td><div class="inline-row"><input class="field-input" style="flex:1" value="https://discord.gg/example" readonly /><button type="button" class="btn">Open</button><button type="button" class="btn">Copy</button></div></td>
+            </tr>
+            <tr>
+              <td class="field-label">Opens</td>
+              <td><div class="inline-row"><input class="field-input small" style="width:78px" value="20:00" readonly /><select class="field-input small" style="width:272px"><option>JST · Asia/Tokyo UTC+09:00</option></select><span class="hint">(6h session)</span></div></td>
+            </tr>
+            <tr>
+              <td class="field-label">Closes</td>
+              <td><div class="inline-row"><input class="field-input small" style="width:78px" value="02:00" readonly /><select class="field-input small" style="width:272px"><option>JST · Asia/Tokyo UTC+09:00</option></select></div></td>
+            </tr>
+            <tr>
+              <td class="field-label">Schedule</td>
+              <td><div style="white-space:pre">20:00-02:00 JST   -&gt;   11:00-17:00 UTC   (6h)</div><div>OPEN - closes in 4h 12m</div></td>
+            </tr>
+            <tr><td class="field-label">Notes</td><td><textarea class="field-input" readonly>Dress code: smart casual. Cover charge optional.</textarea></td></tr>
+          </table>
         </div>
+      </div>
+      <div class="footer">
+        <button type="button" class="btn w120">New venue</button>
+        <button type="button" class="btn w100">Duplicate</button>
+        <button type="button" class="btn w80">Delete</button>
       </div>
     </div>
   </div>
-
+  </div>
   <div id="scene-board" class="walk-scene">
     <div class="beat-title" id="beat-board">Board tab</div>
     <div class="scene-backdrop"></div>
     <div class="imgui-window walk-window">
-      <div class="title-bar">Venue Ledger</div>
-      <div class="window-body">
-        <div class="header-row">
-          <span class="header-clock">19:42:08</span>
-          <span class="header-meta">your time  |  3 venues | compare in UTC  |  system clock: UTC · UTC UTC+00:00</span>
-        </div>
-        <div class="header-separator"></div>
-        <div class="tabs-row">
-          <button type="button" class="tab">LEDGER</button>
-          <button type="button" class="tab active">[ BOARD ]</button>
-          <button type="button" class="tab">EXPORT</button>
-        </div>
-        <div class="child-panel" style="min-height:380px">
-          <div class="section-label">Board</div>
-          <label class="checkbox-row" style="margin-bottom:6px"><input type="checkbox" id="board-24h" checked /> 24h</label>
-          <div class="hint" style="margin-bottom:10px">Every venue's hours projected onto UTC. The line marks now.</div>
-          <table class="board-table">
-            <thead>
-              <tr>
-                <th>Venue</th>
-                <th>Hours</th>
-                <th id="board-your-col">Your time</th>
-                <th>Length</th>
-                <th>Status</th>
-                <th>Today</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><span class="live-text">Example Character's Lounge</span></td>
-                <td>20:00-02:00 JST</td>
-                <td class="gold-text" id="board-time-cell">11:00-17:00</td>
-                <td class="hint">6h</td>
-                <td class="live-text">open - closes in 4h 12m</td>
-                <td>
-                  <div class="day-strip">
-                    <div class="session" style="left:46%; width:25%"></div>
-                    <div class="now-line" style="left:82%"></div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>Crystal Stage</td>
-                <td>21:00-01:00 CET</td>
-                <td class="gold-text">20:00-00:00</td>
-                <td class="hint">4h</td>
-                <td class="hint">closed - opens in 2h 30m</td>
-                <td>
-                  <div class="day-strip">
-                    <div class="session closed" style="left:83%; width:17%"></div>
-                    <div class="now-line" style="left:82%"></div>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="footer">
-          <button type="button" class="btn">New venue</button>
-          <button type="button" class="btn">Duplicate</button>
-          <button type="button" class="btn">Delete</button>
-        </div>
+    <div class="title-bar">Venue Ledger</div>
+    <div class="window-body">
+      <div class="header-row">
+        <span class="header-clock">12:48:00</span>
+        <span class="header-meta">your time  |  3 venues | compare in UTC · UTC UTC+00:00  |  system clock: UTC · UTC UTC+00:00</span>
+      </div>
+      <div class="header-separator"></div>
+      <div class="tabs-row">
+        <button type="button" class="tab">Ledger</button>
+        <button type="button" class="tab active">Board</button>
+        <button type="button" class="tab">Export</button>
+      </div>
+      <div class="child-panel" style="height:300px">
+        <div class="section-label">Board</div>
+        <label class="checkbox-row"><input type="checkbox" id="board-24h" checked /> 24h</label>
+        <div class="hint" style="margin:3px 0 6px">Every venue's hours projected onto UTC · UTC UTC+00:00. The line marks now.</div>
+        <table class="board-table">
+          <thead><tr><th style="width:190px">Venue</th><th style="width:132px">Hours</th><th style="width:120px">Your time</th><th style="width:56px">Length</th><th>Status</th><th style="width:172px">Today</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Example Character's Lounge</td>
+              <td data-h24="20:00-02:00 JST" data-h12="8:00 PM-2:00 AM JST">20:00-02:00 JST</td>
+              <td data-h24="11:00-17:00" data-h12="11:00 AM-5:00 PM">11:00-17:00</td>
+              <td>6h</td>
+              <td data-h24="OPEN - closes in 4h 12m" data-h12="OPEN - closes in 4h 12m">OPEN - closes in 4h 12m</td>
+              <td><div class="day-strip"><div class="session" style="left:45.8%; width:25%"></div><div class="now-line" style="left:53.3%"></div></div></td>
+            </tr>
+            <tr>
+              <td>Crystal Stage</td>
+              <td data-h24="21:00-01:00 CET" data-h12="9:00 PM-1:00 AM CET">21:00-01:00 CET</td>
+              <td data-h24="20:00-00:00 +1d" data-h12="8:00 PM-12:00 AM +1d">20:00-00:00 +1d</td>
+              <td>4h</td>
+              <td data-h24="closed - opens at 20:00 (in 7h 12m)" data-h12="closed - opens at 8:00 PM (in 7h 12m)">closed - opens at 20:00 (in 7h 12m)</td>
+              <td><div class="day-strip"><div class="session closed" style="left:83.3%; width:16.7%"></div><div class="now-line" style="left:53.3%"></div></div></td>
+            </tr>
+            <tr>
+              <td>Harbor Cafe</td>
+              <td data-h24="18:00-22:00 PT" data-h12="6:00 PM-10:00 PM PT">18:00-22:00 PT</td>
+              <td data-h24="01:00-05:00" data-h12="1:00 AM-5:00 AM">01:00-05:00</td>
+              <td>4h</td>
+              <td data-h24="closed - opens tomorrow at 01:00 (in 12h 12m)" data-h12="closed - opens tomorrow at 1:00 AM (in 12h 12m)">closed - opens tomorrow at 01:00 (in 12h 12m)</td>
+              <td><div class="day-strip"><div class="session closed" style="left:4.2%; width:16.7%"></div><div class="now-line" style="left:53.3%"></div></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="footer">
+        <button type="button" class="btn w120">New venue</button>
+        <button type="button" class="btn w100">Duplicate</button>
+        <button type="button" class="btn w80">Delete</button>
       </div>
     </div>
   </div>
-
+  </div>
   <div id="scene-export" class="walk-scene">
     <div class="beat-title" id="beat-export">Export tab</div>
     <div class="scene-backdrop"></div>
     <div class="imgui-window walk-window">
-      <div class="title-bar">Venue Ledger</div>
-      <div class="window-body">
-        <div class="header-row">
-          <span class="header-clock">19:42:08</span>
-          <span class="header-meta">your time  |  3 venues | compare in UTC  |  system clock: UTC · UTC UTC+00:00</span>
-        </div>
-        <div class="header-separator"></div>
-        <div class="tabs-row">
-          <button type="button" class="tab">LEDGER</button>
-          <button type="button" class="tab">BOARD</button>
-          <button type="button" class="tab active">[ EXPORT ]</button>
-        </div>
-        <div class="section-label">Export</div>
-        <div class="export-options">
-          <label class="checkbox-row"><input type="checkbox" checked /> Include travel commands</label>
-          <label class="checkbox-row"><input type="checkbox" checked /> Include notes</label>
-          <span class="hint">24-hour is set on the board.</span>
-        </div>
-        <div class="export-preview" style="min-height:200px">VENUE LEDGER - 3 venues
-Board clock: UTC · UTC UTC+00:00 - exported Sat 31 Oct 2026 19:42
+    <div class="title-bar">Venue Ledger</div>
+    <div class="window-body">
+      <div class="header-row">
+        <span class="header-clock">12:48:00</span>
+        <span class="header-meta">your time  |  3 venues | compare in UTC · UTC UTC+00:00  |  system clock: UTC · UTC UTC+00:00</span>
+      </div>
+      <div class="header-separator"></div>
+      <div class="tabs-row">
+        <button type="button" class="tab">Ledger</button>
+        <button type="button" class="tab">Board</button>
+        <button type="button" class="tab active">Export</button>
+      </div>
+      <div class="section-label">Export</div>
+      <div class="export-options">
+        <label class="checkbox-row"><input type="checkbox" checked /> Include travel commands</label>
+        <label class="checkbox-row"><input type="checkbox" checked /> Include notes</label>
+        <span class="hint">24-hour is set on the board.</span>
+      </div>
+      <div class="export-preview" style="height:330px">VENUE LEDGER - 3 venues
+Board clock: UTC · UTC UTC+00:00 - exported Sat 31 Oct 2026 12:48
 Open right now: 1 venue
 
 1. Example Character's Lounge   [OPEN - CLOSES IN 4H 12M]
    Location  Ward 12, Plot 30, Lavender Beds, Mateus
    Travel    /li mateus lavender 12 30
    Hours     20:00-02:00 JST  -&gt;  11:00-17:00 UTC  (6h)
-   Notes     Dress code: smart casual. Cover charge optional.</div>
-        <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-          <button type="button" class="btn">Copy list</button>
-          <button type="button" class="btn">Save .txt</button>
-          <span class="flash" id="export-flash" hidden>Full venue list copied.</span>
-        </div>
-        <div class="footer">
-          <button type="button" class="btn">New venue</button>
-          <button type="button" class="btn">Duplicate</button>
-          <button type="button" class="btn">Delete</button>
-        </div>
+   Website   https://example.test/venue
+   Discord   https://discord.gg/example
+   Notes     Dress code: smart casual. Cover charge optional.
+
+2. Crystal Stage   [CLOSED - OPENS AT 20:00 (IN 7H 12M)]
+   Hours     21:00-01:00 CET  -&gt;  20:00-00:00 +1d UTC  (4h)
+
+3. Harbor Cafe   [CLOSED - OPENS TOMORROW AT 01:00 (IN 12H 12M)]
+   Hours     18:00-22:00 PT  -&gt;  01:00-05:00 UTC  (4h)</div>
+      <div class="button-row">
+        <button type="button" class="btn w120">Copy list</button>
+        <button type="button" class="btn w120">Save .txt</button>
+        <span class="hint">C:\Users\Adventurer\AppData\Roaming\XIVLauncher\pluginConfigs\VenueLedger\venues-20261031-124800.txt</span>
+      </div>
+      <div class="footer">
+        <button type="button" class="btn w120">New venue</button>
+        <button type="button" class="btn w100">Duplicate</button>
+        <button type="button" class="btn w80">Delete</button>
+        <span class="flash" id="export-flash" hidden>Full venue list copied.</span>
       </div>
     </div>
   </div>
-
+  </div>
   <div id="scene-chat" class="walk-scene">
     <div class="beat-title" id="beat-chat">/venue commands</div>
     <div class="scene-backdrop"></div>
-    <div class="layout-with-chat walk-chat-layout">
-      <div>
-        <div class="imgui-window" style="width:320px">
-          <div class="title-bar">Venue Ledger</div>
-          <div class="window-body" style="padding:16px">
-            <div class="hint" style="margin-bottom:12px">Window can stay closed — clipboard and file export still work from chat.</div>
-            <div class="section-label">Commands</div>
-            <table class="field-table">
-              <tr><td class="field-label">/venue</td><td>open the ledger</td></tr>
-              <tr><td class="field-label">/venue copy</td><td>copy the whole list</td></tr>
-              <tr><td class="field-label">/venue export</td><td>write venues-*.txt</td></tr>
-              <tr><td class="field-label">/venue list</td><td>hours in board zone</td></tr>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="chat-overlay" style="margin-top:40px">
-        <div class="command-caption">Dalamud chat output from <span class="gold-text">/venue</span> subcommands (plugin tag: VenueLedger)</div>
-        <div class="chat-panel" id="chat-panel">
-          <div class="chat-line" data-at="11.0"><span class="chat-user">/venue list</span></div>
-          <div class="chat-line" data-at="11.25"><span class="chat-plugin">[Venue Ledger]</span> Example Character's Lounge - 11:00-17:00 UTC (open - closes in 4h 12m)</div>
-          <div class="chat-line" data-at="11.5"><span class="chat-plugin">[Venue Ledger]</span> Crystal Stage - 20:00-00:00 UTC (closed - opens in 2h 30m)</div>
-          <div class="chat-line" data-at="12.0"><span class="chat-user">/venue copy</span></div>
-          <div class="chat-line" data-at="12.25"><span class="chat-plugin">[Venue Ledger]</span> copied 3 venues to the clipboard.</div>
-          <div class="chat-line" data-at="12.6"><span class="chat-user">/venue export</span></div>
-          <div class="chat-line" data-at="12.85"><span class="chat-plugin">[Venue Ledger]</span> saved /config/VenueLedger/venues-20261031-1942.txt</div>
-        </div>
+    <div class="layout-with-chat">
+    <div class="chat-overlay help-card">
+      <div class="command-caption">Command help registered for <b>/venue</b></div>
+      <div class="chat-panel">Open the venue ledger. /venue copy copies the list, /venue export writes it to a file, /venue list echoes today's hours into chat.</div>
+    </div>
+    <div class="chat-overlay">
+      <div class="command-caption">Game chat - Dalamud prints each line with the plugin's tag, VenueLedger. The window can stay closed.</div>
+      <div class="chat-panel" id="chat-panel">
+        <div class="chat-line" data-at="10.90"><span class="chat-user">/venue help</span></div>
+        <div class="chat-line" data-at="11.20"><span class="chat-plugin">[VenueLedger]</span> /venue opens the ledger. /venue copy copies the list. /venue export writes a .txt. /venue list prints today's hours to chat.</div>
+        <div class="chat-line" data-at="11.42"><span class="chat-user">/venue list</span></div>
+        <div class="chat-line" data-at="11.72"><span class="chat-plugin">[VenueLedger]</span> Example Character's Lounge - 11:00-17:00 UTC (OPEN - closes in 4h 12m)</div>
+        <div class="chat-line" data-at="11.94"><span class="chat-plugin">[VenueLedger]</span> Crystal Stage - 20:00-00:00 UTC (closed - opens at 20:00 (in 7h 12m))</div>
+        <div class="chat-line" data-at="12.16"><span class="chat-plugin">[VenueLedger]</span> Harbor Cafe - 01:00-05:00 UTC (closed - opens tomorrow at 01:00 (in 12h 12m))</div>
+        <div class="chat-line" data-at="12.38"><span class="chat-user">/venue copy</span></div>
+        <div class="chat-line" data-at="12.68"><span class="chat-plugin">[VenueLedger]</span> [Venue Ledger] copied 3 venues to the clipboard.</div>
+        <div class="chat-line" data-at="12.90"><span class="chat-user">/venue export</span></div>
+        <div class="chat-line" data-at="13.20"><span class="chat-plugin">[VenueLedger]</span> [Venue Ledger] saved C:\Users\Adventurer\AppData\Roaming\XIVLauncher\pluginConfigs\VenueLedger\venues-20261031-124805.txt</div>
       </div>
     </div>
+  </div>
   </div>
 
   <div class="video-caption" id="caption">Venue Ledger — mock-up walkthrough</div>
 
   <script>
     const scenes = [
-      {
-        id: 'scene-ledger',
-        beat: 'beat-ledger',
-        start: 0,
-        end: 3.8,
-        caption: 'Ledger tab — filterable list, open/closed status, and venue editor',
-      },
-      {
-        id: 'scene-board',
-        beat: 'beat-board',
-        start: 3.4,
-        end: 7.4,
-        caption: 'Board tab — projected hours and Today day strip (line = now)',
-      },
-      {
-        id: 'scene-export',
-        beat: 'beat-export',
-        start: 7.0,
-        end: 10.8,
-        caption: 'Export tab — toggles, live preview, Copy list / Save .txt',
-      },
-      {
-        id: 'scene-chat',
-        beat: 'beat-chat',
-        start: 10.4,
-        end: 15.0,
-        caption: '`/venue` commands — list, copy, and export in Dalamud chat',
-      },
+      { id: 'scene-ledger', beat: 'beat-ledger', start: 0, end: 3.8, caption: 'Ledger tab — filterable list, open/closed status, and venue editor' },
+      { id: 'scene-board', beat: 'beat-board', start: 3.4, end: 7.4, caption: 'Board tab — projected hours, Today day strip (line = now), 24h toggle' },
+      { id: 'scene-export', beat: 'beat-export', start: 7.0, end: 10.8, caption: 'Export tab — toggles, live preview, Copy list / Save .txt' },
+      { id: 'scene-chat', beat: 'beat-chat', start: 10.4, end: 15.0, caption: '/venue commands — help, list, copy and export in game chat' },
     ];
 
     function easeOutCubic(x) {
@@ -268,29 +257,17 @@ Open right now: 1 venue
 
     function sceneMotion(t, start, end) {
       const fade = 0.42;
-      let opacity = 0;
-      let ty = 14;
-      if (t < start) {
-        opacity = 0;
-        ty = 14;
-      } else if (t > end) {
-        opacity = 0;
-        ty = -10;
-      } else if (t < start + fade) {
-        const p = (t - start) / fade;
-        const e = easeOutCubic(p);
-        opacity = e;
-        ty = 14 * (1 - e);
-      } else if (t > end - fade) {
-        const p = (end - t) / fade;
-        const e = easeOutCubic(p);
-        opacity = e;
-        ty = -10 * (1 - e);
-      } else {
-        opacity = 1;
-        ty = 0;
+      if (t < start) return { opacity: 0, ty: 14 };
+      if (t > end) return { opacity: 0, ty: -10 };
+      if (t < start + fade) {
+        const e = easeOutCubic((t - start) / fade);
+        return { opacity: e, ty: 14 * (1 - e) };
       }
-      return { opacity, ty };
+      if (t > end - fade) {
+        const e = easeOutCubic((end - t) / fade);
+        return { opacity: e, ty: -10 * (1 - e) };
+      }
+      return { opacity: 1, ty: 0 };
     }
 
     window.seekWalkthrough = function (t) {
@@ -309,29 +286,23 @@ Open right now: 1 venue
       }
       document.getElementById('caption').textContent = cap;
 
+      // Unticking 24h re-renders every time on the board in 12-hour form.
+      const use24 = t < 5.0 || t >= 6.4;
       const board24 = document.getElementById('board-24h');
-      const timeCell = document.getElementById('board-time-cell');
-      const use24 = t < 5.6 || t >= 6.2;
       if (board24) board24.checked = use24;
-      if (timeCell) timeCell.textContent = use24 ? '11:00-17:00' : '11:00 AM-5:00 PM';
+      document.querySelectorAll('#scene-board [data-h24]').forEach((cell) => {
+        cell.textContent = use24 ? cell.dataset.h24 : cell.dataset.h12;
+      });
 
       const flash = document.getElementById('export-flash');
-      if (flash) flash.hidden = !(t >= 9.0 && t <= 10.2);
+      if (flash) flash.hidden = !(t >= 8.6 && t <= 10.4);
 
-      const chatScene = sceneMotion(t, scenes[3].start, scenes[3].end).opacity;
-      if (chatScene > 0.05) {
-        const lines = document.querySelectorAll('#chat-panel .chat-line');
-        for (const line of lines) {
-          const at = parseFloat(line.getAttribute('data-at'));
-          const p = clamp((t - at) / 0.22, 0, 1);
-          const e = easeOutCubic(p);
-          line.style.opacity = String(e);
-          line.style.transform = `translateY(${6 * (1 - e)}px)`;
-        }
-      } else {
-        document.querySelectorAll('#chat-panel .chat-line').forEach((line) => {
-          line.style.opacity = '0';
-        });
+      const lines = document.querySelectorAll('#chat-panel .chat-line');
+      for (const line of lines) {
+        const at = parseFloat(line.getAttribute('data-at'));
+        const e = easeOutCubic(clamp((t - at) / 0.22, 0, 1));
+        line.style.opacity = String(e);
+        line.style.transform = `translateY(${6 * (1 - e)}px)`;
       }
     };
 

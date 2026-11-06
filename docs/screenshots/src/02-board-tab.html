@@ -7,87 +7,59 @@
 </head>
 <body>
   <div class="mockup-banner">Mock-up</div>
-  <div class="scene-label">Board tab — projected hours, Today day strip (filled = open, line = now), 24h toggle</div>
+  <div class="scene-label">Board tab — projected hours, Today day strip (session bars, line = now), 24h toggle</div>
   <div class="scene-backdrop"></div>
   <div class="imgui-window">
     <div class="title-bar">Venue Ledger</div>
     <div class="window-body">
       <div class="header-row">
-        <span class="header-clock">19:42:08</span>
-        <span class="header-meta">your time  |  3 venues | compare in UTC  |  system clock: UTC · UTC UTC+00:00</span>
+        <span class="header-clock">12:48:00</span>
+        <span class="header-meta">your time  |  3 venues | compare in UTC · UTC UTC+00:00  |  system clock: UTC · UTC UTC+00:00</span>
       </div>
       <div class="header-separator"></div>
-
       <div class="tabs-row">
-        <button class="tab">LEDGER</button>
-        <button class="tab active">[ BOARD ]</button>
-        <button class="tab">EXPORT</button>
+        <button type="button" class="tab">Ledger</button>
+        <button type="button" class="tab active">Board</button>
+        <button type="button" class="tab">Export</button>
       </div>
-
-      <div class="child-panel" style="min-height:440px">
+      <div class="child-panel" style="height:300px">
         <div class="section-label">Board</div>
-        <label class="checkbox-row" style="margin-bottom:6px"><input type="checkbox" checked /> 24h</label>
-        <div class="hint" style="margin-bottom:10px">Every venue's hours projected onto UTC. The line marks now.</div>
-
+        <label class="checkbox-row"><input type="checkbox" id="board-24h" checked /> 24h</label>
+        <div class="hint" style="margin:3px 0 6px">Every venue's hours projected onto UTC · UTC UTC+00:00. The line marks now.</div>
         <table class="board-table">
-          <thead>
-            <tr>
-              <th>Venue</th>
-              <th>Hours</th>
-              <th>Your time</th>
-              <th>Length</th>
-              <th>Status</th>
-              <th>Today</th>
-            </tr>
-          </thead>
+          <thead><tr><th style="width:190px">Venue</th><th style="width:132px">Hours</th><th style="width:120px">Your time</th><th style="width:56px">Length</th><th>Status</th><th style="width:172px">Today</th></tr></thead>
           <tbody>
             <tr>
-              <td><span class="live-text">Example Character's Lounge</span></td>
-              <td>20:00-02:00 JST</td>
-              <td class="gold-text">11:00-17:00</td>
-              <td class="hint">6h</td>
-              <td class="live-text">open - closes in 4h 12m</td>
-              <td>
-                <div class="day-strip">
-                  <div class="session" style="left:46%; width:25%"></div>
-                  <div class="now-line" style="left:82%"></div>
-                </div>
-              </td>
+              <td>Example Character's Lounge</td>
+              <td data-h24="20:00-02:00 JST" data-h12="8:00 PM-2:00 AM JST">20:00-02:00 JST</td>
+              <td data-h24="11:00-17:00" data-h12="11:00 AM-5:00 PM">11:00-17:00</td>
+              <td>6h</td>
+              <td data-h24="OPEN - closes in 4h 12m" data-h12="OPEN - closes in 4h 12m">OPEN - closes in 4h 12m</td>
+              <td><div class="day-strip"><div class="session" style="left:45.8%; width:25%"></div><div class="now-line" style="left:53.3%"></div></div></td>
             </tr>
             <tr>
               <td>Crystal Stage</td>
-              <td>21:00-01:00 CET</td>
-              <td class="gold-text">20:00-00:00</td>
-              <td class="hint">4h</td>
-              <td class="hint">closed - opens in 2h 30m</td>
-              <td>
-                <div class="day-strip">
-                  <div class="session closed" style="left:83%; width:17%"></div>
-                  <div class="now-line" style="left:82%"></div>
-                </div>
-              </td>
+              <td data-h24="21:00-01:00 CET" data-h12="9:00 PM-1:00 AM CET">21:00-01:00 CET</td>
+              <td data-h24="20:00-00:00 +1d" data-h12="8:00 PM-12:00 AM +1d">20:00-00:00 +1d</td>
+              <td>4h</td>
+              <td data-h24="closed - opens at 20:00 (in 7h 12m)" data-h12="closed - opens at 8:00 PM (in 7h 12m)">closed - opens at 20:00 (in 7h 12m)</td>
+              <td><div class="day-strip"><div class="session closed" style="left:83.3%; width:16.7%"></div><div class="now-line" style="left:53.3%"></div></div></td>
             </tr>
             <tr>
               <td>Harbor Cafe</td>
-              <td>18:00-22:00 PST</td>
-              <td class="gold-text">02:00-06:00 +1d</td>
-              <td class="hint">4h</td>
-              <td class="hint">closed - opens in 6h 18m</td>
-              <td>
-                <div class="day-strip">
-                  <div class="session closed" style="left:8%; width:17%"></div>
-                  <div class="now-line" style="left:82%"></div>
-                </div>
-              </td>
+              <td data-h24="18:00-22:00 PT" data-h12="6:00 PM-10:00 PM PT">18:00-22:00 PT</td>
+              <td data-h24="01:00-05:00" data-h12="1:00 AM-5:00 AM">01:00-05:00</td>
+              <td>4h</td>
+              <td data-h24="closed - opens tomorrow at 01:00 (in 12h 12m)" data-h12="closed - opens tomorrow at 1:00 AM (in 12h 12m)">closed - opens tomorrow at 01:00 (in 12h 12m)</td>
+              <td><div class="day-strip"><div class="session closed" style="left:4.2%; width:16.7%"></div><div class="now-line" style="left:53.3%"></div></div></td>
             </tr>
           </tbody>
         </table>
       </div>
-
       <div class="footer">
-        <button class="btn">New venue</button>
-        <button class="btn">Duplicate</button>
-        <button class="btn">Delete</button>
+        <button type="button" class="btn w120">New venue</button>
+        <button type="button" class="btn w100">Duplicate</button>
+        <button type="button" class="btn w80">Delete</button>
       </div>
     </div>
   </div>

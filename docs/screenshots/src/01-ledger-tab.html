@@ -13,52 +13,44 @@
     <div class="title-bar">Venue Ledger</div>
     <div class="window-body">
       <div class="header-row">
-        <span class="header-clock">19:42:08</span>
-        <span class="header-meta">your time  |  3 venues | compare in UTC  |  system clock: UTC · UTC UTC+00:00</span>
+        <span class="header-clock">12:48:00</span>
+        <span class="header-meta">your time  |  3 venues | compare in UTC · UTC UTC+00:00  |  system clock: UTC · UTC UTC+00:00</span>
       </div>
       <div class="header-separator"></div>
-
       <div class="tabs-row">
-        <button class="tab active">[ LEDGER ]</button>
-        <button class="tab">BOARD</button>
-        <button class="tab">EXPORT</button>
+        <button type="button" class="tab active">Ledger</button>
+        <button type="button" class="tab">Board</button>
+        <button type="button" class="tab">Export</button>
       </div>
-
       <div class="panel-row">
         <div class="child-panel panel-list">
           <div class="section-label">Ledger</div>
           <input class="input-hint" value="" placeholder="filter" readonly />
           <div class="venue-item selected">
-            <div class="venue-name live">Example Character's Lounge</div>
+            <div class="venue-name">Example Character's Lounge</div>
             <div class="venue-sub">open - closes in 4h 12m</div>
-            <div class="venue-sub">20:00-02:00 your time</div>
+            <div class="venue-sub">11:00-17:00 your time</div>
           </div>
           <div class="venue-item">
-            <div class="venue-name closed">Crystal Stage</div>
-            <div class="venue-sub">closed - opens in 2h 30m</div>
-            <div class="venue-sub">21:00-01:00 your time</div>
+            <div class="venue-name">Crystal Stage</div>
+            <div class="venue-sub">closed - opens in 7h 12m</div>
+            <div class="venue-sub">20:00-00:00 your time</div>
           </div>
           <div class="venue-item">
-            <div class="venue-name closed">Untitled venue</div>
-            <div class="venue-sub">closed - opens tomorrow at 04:30</div>
+            <div class="venue-name">Harbor Cafe</div>
+            <div class="venue-sub">closed - opens in 12h 12m</div>
+            <div class="venue-sub">01:00-05:00 your time</div>
           </div>
         </div>
-
         <div class="child-panel panel-main">
           <div class="section-label">Venue</div>
           <table class="field-table">
-            <tr>
-              <td class="field-label">Name</td>
-              <td><input class="field-input" value="Example Character's Lounge" readonly /></td>
-            </tr>
+            <tr><td class="field-label">Name</td><td><input class="field-input" value="Example Character's Lounge" readonly /></td></tr>
             <tr>
               <td class="field-label">Location</td>
               <td>
                 <input class="field-input" value="Ward 12, Plot 30, Lavender Beds, Mateus" readonly />
-                <div class="inline-row" style="margin-top:6px">
-                  <span class="gold-text">/li mateus lavender 12 30</span>
-                  <button class="btn">Copy travel</button>
-                </div>
+                <div class="inline-row" style="margin-top:4px"><span>/li mateus lavender 12 30</span><button type="button" class="btn">Copy travel</button></div>
               </td>
             </tr>
             <tr>
@@ -67,70 +59,40 @@
                 <div class="inline-row">
                   <input class="field-input small" style="width:110px" value="Mateus" readonly />
                   <select class="field-input small" style="width:140px"><option>Lavender Beds</option></select>
-                  <input class="field-input small" style="width:64px" value="12" readonly />
-                  <input class="field-input small" style="width:64px" value="30" readonly />
+                  <span class="input-int"><input class="field-input" value="12" readonly /><button type="button" class="btn">-</button><button type="button" class="btn">+</button></span>
+                  <span class="input-int"><input class="field-input" value="30" readonly /><button type="button" class="btn">-</button><button type="button" class="btn">+</button></span>
                 </div>
-                <div class="hint" style="margin-top:4px">District, ward and plot are optional - they are only used to build the travel command.</div>
+                <div class="hint" style="margin-top:3px">District, ward and plot are optional - they are only used to build the travel command.</div>
               </td>
             </tr>
             <tr>
               <td class="field-label">Website</td>
-              <td>
-                <div class="inline-row">
-                  <input class="field-input" style="flex:1" value="https://example.test/venue" readonly />
-                  <button class="btn">Open</button>
-                  <button class="btn">Copy</button>
-                </div>
-              </td>
+              <td><div class="inline-row"><input class="field-input" style="flex:1" value="https://example.test/venue" readonly /><button type="button" class="btn">Open</button><button type="button" class="btn">Copy</button></div></td>
             </tr>
             <tr>
               <td class="field-label">Discord</td>
-              <td>
-                <div class="inline-row">
-                  <input class="field-input" style="flex:1" value="https://discord.gg/example" readonly />
-                  <button class="btn">Open</button>
-                  <button class="btn">Copy</button>
-                </div>
-              </td>
+              <td><div class="inline-row"><input class="field-input" style="flex:1" value="https://discord.gg/example" readonly /><button type="button" class="btn">Open</button><button type="button" class="btn">Copy</button></div></td>
             </tr>
             <tr>
               <td class="field-label">Opens</td>
-              <td>
-                <div class="inline-row">
-                  <input class="field-input small" style="width:78px" value="20:00" readonly />
-                  <select class="field-input small" style="width:272px"><option>JST · Asia/Tokyo UTC+09:00</option></select>
-                  <span class="hint">(6h session)</span>
-                </div>
-              </td>
+              <td><div class="inline-row"><input class="field-input small" style="width:78px" value="20:00" readonly /><select class="field-input small" style="width:272px"><option>JST · Asia/Tokyo UTC+09:00</option></select><span class="hint">(6h session)</span></div></td>
             </tr>
             <tr>
               <td class="field-label">Closes</td>
-              <td>
-                <div class="inline-row">
-                  <input class="field-input small" style="width:78px" value="02:00" readonly />
-                  <select class="field-input small" style="width:272px"><option>JST · Asia/Tokyo UTC+09:00</option></select>
-                </div>
-              </td>
+              <td><div class="inline-row"><input class="field-input small" style="width:78px" value="02:00" readonly /><select class="field-input small" style="width:272px"><option>JST · Asia/Tokyo UTC+09:00</option></select></div></td>
             </tr>
             <tr>
               <td class="field-label">Schedule</td>
-              <td>
-                <div class="gold-text">20:00-02:00 JST   -&gt;   11:00-17:00 UTC   (6h)</div>
-                <div class="live-text">open - closes in 4h 12m</div>
-              </td>
+              <td><div style="white-space:pre">20:00-02:00 JST   -&gt;   11:00-17:00 UTC   (6h)</div><div>OPEN - closes in 4h 12m</div></td>
             </tr>
-            <tr>
-              <td class="field-label">Notes</td>
-              <td><textarea class="field-input" rows="3" readonly>Dress code: smart casual. Cover charge optional.</textarea></td>
-            </tr>
+            <tr><td class="field-label">Notes</td><td><textarea class="field-input" readonly>Dress code: smart casual. Cover charge optional.</textarea></td></tr>
           </table>
         </div>
       </div>
-
       <div class="footer">
-        <button class="btn">New venue</button>
-        <button class="btn">Duplicate</button>
-        <button class="btn">Delete</button>
+        <button type="button" class="btn w120">New venue</button>
+        <button type="button" class="btn w100">Duplicate</button>
+        <button type="button" class="btn w80">Delete</button>
       </div>
     </div>
   </div>

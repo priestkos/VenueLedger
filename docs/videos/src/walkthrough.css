@@ -24,7 +24,7 @@ body.stage .mockup-banner {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 72px;
+  padding-top: 68px;
   opacity: 0;
   pointer-events: none;
   will-change: transform, opacity;
@@ -32,11 +32,6 @@ body.stage .mockup-banner {
 
 .walk-window {
   width: 940px;
-}
-
-.walk-chat-layout {
-  padding: 0 48px;
-  max-width: 1180px;
 }
 
 .scene-backdrop {
@@ -53,16 +48,9 @@ body.stage .mockup-banner {
   font-size: 15px;
   font-weight: 600;
   text-align: center;
-  color: var(--ink-soft);
-  background: linear-gradient(0deg, rgba(10, 5, 7, 0.92) 0%, rgba(10, 5, 7, 0.55) 70%, transparent 100%);
+  color: #f0f0f0;
+  background: linear-gradient(0deg, rgba(5, 6, 10, 0.92) 0%, rgba(5, 6, 10, 0.55) 70%, transparent 100%);
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.85);
-}
-
-.command-caption {
-  color: var(--ink-soft);
-  font-size: 13px;
-  margin-bottom: 12px;
-  max-width: 520px;
 }
 
 #chat-panel .chat-line {

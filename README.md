@@ -16,7 +16,7 @@ Screenshots are mock-ups illustrating the UI, not captures from the live game.
 | | |
 | --- | --- |
 | ![Ledger tab — venue list and editor](docs/screenshots/01-ledger-tab.png) | **Ledger tab** — filterable list, open/closed status, full venue editor (fields, Lifestream travel, links, hours, schedule summary, notes), and footer actions. |
-| ![Board tab — projected hours and day strip](docs/screenshots/02-board-tab.png) | **Board tab** — all venues on one board clock with Hours / Your time / Length / Status columns and the **Today** day strip (filled = open session, line = now). |
+| ![Board tab — projected hours and day strip](docs/screenshots/02-board-tab.png) | **Board tab** — all venues on one board clock with Hours / Your time / Length / Status columns and the **Today** day strip (session bars, brighter while open; line = now). |
 | ![Export tab — preview and output](docs/screenshots/03-export-tab.png) | **Export tab** — include travel/notes toggles, live preview, **Copy list** / **Save .txt**, and flash feedback. |
 | ![Slash commands — chat output](docs/screenshots/04-slash-commands.png) | **`/venue` commands** — `/venue help`, `/venue list`, `/venue copy`, and `/venue export` messages in chat (works with the window closed). |
 

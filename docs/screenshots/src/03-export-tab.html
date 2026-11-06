@@ -13,26 +13,23 @@
     <div class="title-bar">Venue Ledger</div>
     <div class="window-body">
       <div class="header-row">
-        <span class="header-clock">19:42:08</span>
-        <span class="header-meta">your time  |  3 venues | compare in UTC  |  system clock: UTC · UTC UTC+00:00</span>
+        <span class="header-clock">12:48:00</span>
+        <span class="header-meta">your time  |  3 venues | compare in UTC · UTC UTC+00:00  |  system clock: UTC · UTC UTC+00:00</span>
       </div>
       <div class="header-separator"></div>
-
       <div class="tabs-row">
-        <button class="tab">LEDGER</button>
-        <button class="tab">BOARD</button>
-        <button class="tab active">[ EXPORT ]</button>
+        <button type="button" class="tab">Ledger</button>
+        <button type="button" class="tab">Board</button>
+        <button type="button" class="tab active">Export</button>
       </div>
-
       <div class="section-label">Export</div>
       <div class="export-options">
         <label class="checkbox-row"><input type="checkbox" checked /> Include travel commands</label>
         <label class="checkbox-row"><input type="checkbox" checked /> Include notes</label>
         <span class="hint">24-hour is set on the board.</span>
       </div>
-
-      <div class="export-preview">VENUE LEDGER - 3 venues
-Board clock: UTC · UTC UTC+00:00 - exported Sat 31 Oct 2026 19:42
+      <div class="export-preview" style="height:400px">VENUE LEDGER - 3 venues
+Board clock: UTC · UTC UTC+00:00 - exported Sat 31 Oct 2026 12:48
 Open right now: 1 venue
 
 1. Example Character's Lounge   [OPEN - CLOSES IN 4H 12M]
@@ -43,22 +40,20 @@ Open right now: 1 venue
    Discord   https://discord.gg/example
    Notes     Dress code: smart casual. Cover charge optional.
 
-2. Crystal Stage   [CLOSED - OPENS IN 2H 30M]
-   Hours     21:00-01:00 CET  -&gt;  20:00-00:00 UTC  (4h)
+2. Crystal Stage   [CLOSED - OPENS AT 20:00 (IN 7H 12M)]
+   Hours     21:00-01:00 CET  -&gt;  20:00-00:00 +1d UTC  (4h)
 
-3. Harbor Cafe   [CLOSED - OPENS IN 6H 18M]
-   Hours     18:00-22:00 PST  -&gt;  02:00-06:00 +1d UTC  (4h)</div>
-
-      <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-        <button class="btn">Copy list</button>
-        <button class="btn">Save .txt</button>
-        <span class="hint">Saved to /config/VenueLedger/venues-20261031-1942.txt</span>
+3. Harbor Cafe   [CLOSED - OPENS TOMORROW AT 01:00 (IN 12H 12M)]
+   Hours     18:00-22:00 PT  -&gt;  01:00-05:00 UTC  (4h)</div>
+      <div class="button-row">
+        <button type="button" class="btn w120">Copy list</button>
+        <button type="button" class="btn w120">Save .txt</button>
+        <span class="hint">C:\Users\Adventurer\AppData\Roaming\XIVLauncher\pluginConfigs\VenueLedger\venues-20261031-124800.txt</span>
       </div>
-
       <div class="footer">
-        <button class="btn">New venue</button>
-        <button class="btn">Duplicate</button>
-        <button class="btn">Delete</button>
+        <button type="button" class="btn w120">New venue</button>
+        <button type="button" class="btn w100">Duplicate</button>
+        <button type="button" class="btn w80">Delete</button>
         <span class="flash">Full venue list copied.</span>
       </div>
     </div>
