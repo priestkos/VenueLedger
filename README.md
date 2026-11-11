@@ -125,11 +125,11 @@ Releases are created automatically on each push to `main` that changes the plugi
 
 ## Tests
 
-`tools/LogicTests` compiles `Venue.cs` and `Schedule.cs` from the plugin by path, so it runs the real
+`tools/LogicTests` compiles `Venue.cs`, `Schedule.cs` and `Configuration.cs` from the plugin by path, so it runs the real
 logic with no game and no dev distrib:
 
 ```
-dotnet run --project tools/LogicTests -c Release          # 202 checks
+dotnet run --project tools/LogicTests -c Release          # 228 checks
 dotnet run --project tools/LogicTests -c Release -- --show # a real export, printed
 ```
 
