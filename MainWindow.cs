@@ -389,7 +389,7 @@ public sealed class MainWindow : Window, IDisposable
 
             var text = row.OwnOpenText + "-" + row.OwnCloseText + " " + row.OwnZoneText +
                        "   ->   " + row.BoardOpenText + "-" + row.BoardCloseText +
-                       (row.BoardDayText.Length > 0 ? row.BoardDayText : string.Empty) +
+                       (row.BoardDayText.Length > 0 ? " " + row.BoardDayText : string.Empty) +
                        " " + row.BoardLabel +
                        "   (" + row.LengthText + ")";
 
