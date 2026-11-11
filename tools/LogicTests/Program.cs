@@ -163,6 +163,24 @@ internal static class Program
             Ok(error.Length > 0, $"\"{bad}\" should explain itself");
         }
 
+        // \d matches every Unicode digit, but int.Parse only reads ASCII: an IME's full-width or another
+        // script's digits must be refused with a message, never thrown out of a Draw call.
+        foreach (var foreign in new[] { "\uFF12\uFF10:\uFF10\uFF10", "\uFF12\uFF10\uFF10\uFF10", "\u0662\u0660\u0660\u0660", "\uFF18pm" })
+        {
+            bool parsed;
+            try
+            {
+                parsed = ClockText.TryParse(foreign, out _, out _);
+            }
+            catch (Exception ex)
+            {
+                Ok(false, $"\"{foreign}\" threw {ex.GetType().Name}");
+                continue;
+            }
+
+            Ok(!parsed, $"\"{foreign}\" (non-ASCII digits) is refused");
+        }
+
         // Every minute of the day round-trips through both formats.
         var roundtrips = 0;
         for (var minute = 0; minute < 1440; minute++)

@@ -243,9 +243,10 @@ public static class ZoneBook
 /// <summary>Lenient wall-clock input: what you would actually type at a door.</summary>
 public static class ClockText
 {
-    private static readonly Regex RxColon = new(@"^(\d{1,2}):(\d{2})(?::\d{2})?\s*(am|pm)?$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex RxMeridiem = new(@"^(\d{1,2})\s*(am|pm)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex RxDigits = new(@"^\d{1,4}$", RegexOptions.Compiled);
+    private static readonly Regex RxColon = new(@"^([0-9]{1,2}):([0-9]{2})(?::[0-9]{2})?\s*(am|pm)?$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex RxMeridiem = new(@"^([0-9]{1,2})\s*(am|pm)$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    // [0-9], not \d: \d matches full-width and other-script digits that int.Parse then throws on.
+    private static readonly Regex RxDigits = new(@"^[0-9]{1,4}$", RegexOptions.Compiled);
 
     public const string Hint = "20:00, 8pm, 8:30pm or 2000";
 
