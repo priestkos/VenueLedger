@@ -676,6 +676,22 @@ internal static class Program
             new ExportOptions { Use24Hour = false });
         Ok(twelve.Contains("8:00 PM-2:00 AM JST", StringComparison.Ordinal), "12-hour export");
 
+        // The board zone's label is read at the session it labels, not at export time: a London venue
+        // opening after the October change must read GMT even when exported on the BST side of it.
+        var earlyBird = new Venue
+        {
+            Name = "Early Bird",
+            OpenTime = "03:00",
+            CloseTime = "05:00",
+            OpenZone = "Europe/London",
+            CloseZone = "Europe/London",
+        };
+        var beforeChange = new DateTimeOffset(2026, 10, 24, 12, 0, 0, TimeSpan.Zero); // 13:00 BST, change is 25 Oct 01:00Z
+        var acrossDst = Exporter.Build(Board.Build(new List<Venue> { earlyBird }, "Europe/London", beforeChange, true),
+            new ExportOptions());
+        Ok(acrossDst.Contains("03:00-05:00 GMT  ->  03:00-05:00 GMT", StringComparison.Ordinal),
+            "board label is taken at the session's own instant (GMT after the change)");
+
         // An empty ledger still produces a valid, honest document.
         var empty = Exporter.Build(Board.Build(new List<Venue>(), "", Now, true), new ExportOptions());
         Ok(empty.Contains("0 venues", StringComparison.Ordinal), "empty export says zero venues");

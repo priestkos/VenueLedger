@@ -146,11 +146,10 @@ public sealed class Plugin : IDalamudPlugin
                     return;
                 }
 
-                var label = ZoneBook.Label(board.BoardZone, board.Now);
                 foreach (var row in board.Rows)
                 {
                     var hours = row.Known
-                        ? row.BoardOpenText + "-" + row.BoardCloseText + " " + label + " (" + row.StatusText + ")"
+                        ? row.BoardOpenText + "-" + row.BoardCloseText + " " + row.BoardLabel + " (" + row.StatusText + ")"
                         : row.Error;
 
                     ChatGui.Print(row.Venue.DisplayName + " - " + hours, "VenueLedger");

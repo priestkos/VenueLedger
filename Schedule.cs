@@ -584,6 +584,9 @@ public sealed class VenueRow
     /// <summary>"+1d" when the session ends on another day in the board timezone.</summary>
     public string BoardDayText { get; init; } = string.Empty;
 
+    /// <summary>The board zone's label at the session's opening, so a date past a DST change reads GMT, not BST.</summary>
+    public string BoardLabel { get; init; } = string.Empty;
+
     public string LengthText { get; init; } = string.Empty;
     public string StatusText { get; init; } = string.Empty;
     public string Travel { get; init; } = string.Empty;
@@ -692,6 +695,7 @@ public static class Board
             BoardOpenText = ClockText.Format((int)boardOpen.TimeOfDay.TotalMinutes, use24Hour),
             BoardCloseText = ClockText.Format((int)boardClose.TimeOfDay.TotalMinutes, use24Hour),
             BoardDayText = dayDelta > 0 ? "+" + dayDelta.ToString(CultureInfo.InvariantCulture) + "d" : string.Empty,
+            BoardLabel = ZoneBook.Label(boardZone, session.Opens),
             LengthText = ClockText.Length(session.Length),
             StatusText = statusText,
             Travel = Travel.Command(venue) ?? string.Empty,
@@ -782,7 +786,7 @@ public static class Exporter
                     .Append("  ->  ")
                     .Append(row.BoardOpenText).Append('-').Append(row.BoardCloseText)
                     .Append(row.BoardDayText.Length > 0 ? " " + row.BoardDayText : string.Empty)
-                    .Append(' ').Append(ZoneBook.Label(board.BoardZone, board.Now))
+                    .Append(' ').Append(row.BoardLabel)
                     .Append("  (").Append(row.LengthText).Append(')')
                     .AppendLine();
             }

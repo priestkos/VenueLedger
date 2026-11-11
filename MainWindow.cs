@@ -387,11 +387,10 @@ public sealed class MainWindow : Window, IDisposable
                 return;
             }
 
-            var boardZone = ZoneBook.Resolve(config.BoardZone);
             var text = row.OwnOpenText + "-" + row.OwnCloseText + " " + row.OwnZoneText +
                        "   ->   " + row.BoardOpenText + "-" + row.BoardCloseText +
                        (row.BoardDayText.Length > 0 ? row.BoardDayText : string.Empty) +
-                       " " + ZoneBook.Label(boardZone, board.Now) +
+                       " " + row.BoardLabel +
                        "   (" + row.LengthText + ")";
 
             ImGui.TextUnformatted(text);
