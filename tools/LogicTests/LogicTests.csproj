@@ -10,9 +10,11 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
 
-  <!-- The real logic files, compiled as-is. Nothing here references Dalamud. -->
+  <!-- The real logic files, compiled as-is. Configuration.cs needs only the IPluginConfiguration stub. -->
   <ItemGroup>
     <Compile Include="Program.cs" />
+    <Compile Include="DalamudStubs.cs" />
+    <Compile Include="../../Configuration.cs" />
     <Compile Include="../../Venue.cs" />
     <Compile Include="../../Schedule.cs" />
   </ItemGroup>

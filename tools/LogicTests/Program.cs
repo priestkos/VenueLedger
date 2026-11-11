@@ -39,6 +39,7 @@ internal static class Program
         LinkSchemes();
         ExportText();
         ExportPaths();
+        ConfigRepair();
         InvariantSweep();
 
         Console.WriteLine();
@@ -625,6 +626,64 @@ internal static class Program
         {
             System.IO.Directory.Delete(dir, true);
         }
+    }
+
+    // ------------------------------------------------------------------ config
+
+    private static void ConfigRepair()
+    {
+        Section("config repair");
+
+        var twin = new Venue { Id = "same", Name = "A" };
+        var config = new Configuration
+        {
+            Venues = new List<Venue>
+            {
+                twin,
+                null!,
+                new() { Id = "same", Name = "B", District = "lavender", Ward = 99, Plot = -3, Notes = null!, OpenZone = null! },
+                new() { Id = "  ", District = "limsa" },
+            },
+            SelectedId = "gone",
+            BoardZone = null!,
+        };
+        config.Normalize();
+
+        Eq(config.Venues.Count, 3, "null venues are dropped");
+        Eq(config.Venues.Select(v => v.Id).Distinct().Count(), 3, "duplicate and blank ids are replaced");
+        Eq(config.Venues[0].Id, "same", "the first holder of an id keeps it");
+        Eq(config.Venues[1].District, Districts.LavenderBeds, "a hand-typed district folds onto the canonical name");
+        Eq(config.Venues[2].District, string.Empty, "an unknown district is cleared");
+        Eq(config.Venues[1].Ward, 30, "ward clamps to 30");
+        Eq(config.Venues[1].Plot, 0, "a negative plot clamps to unset");
+        Eq(config.Venues[1].Notes, string.Empty, "null text becomes empty");
+        Eq(config.Venues[1].OpenZone, string.Empty, "null zone becomes system");
+        Eq(config.SelectedId, "same", "a dangling selection moves to the first venue");
+        Eq(config.BoardZone, string.Empty, "null board zone becomes system");
+
+        var empty = new Configuration { Venues = null! };
+        empty.Normalize();
+        Eq(empty.Venues.Count, 0, "a missing venue list is rebuilt");
+        Eq(empty.SelectedId, string.Empty, "nothing selected in an empty ledger");
+
+        // Deleting moves the selection to the row that slid into place, or the new last row.
+        var ledger = new Configuration { NewVenueZone = "Asia/Tokyo" };
+        var a = ledger.AddVenue();
+        var b = ledger.AddVenue();
+        var c = ledger.AddVenue();
+        Eq(ledger.SelectedId, c.Id, "a new venue is selected");
+        Eq(a.OpenZone + "|" + a.CloseZone, "Asia/Tokyo|Asia/Tokyo", "a new venue takes the default zone for both clocks");
+        ledger.Remove(b);
+        Eq(ledger.SelectedId, c.Id, "deleting a middle row selects the next one");
+        ledger.Remove(c);
+        Eq(ledger.SelectedId, a.Id, "deleting the last row selects the new last row");
+        ledger.Remove(new Venue());
+        Eq(ledger.Venues.Count, 1, "removing a venue not in the ledger is a no-op");
+        ledger.Remove(a);
+        Eq(ledger.SelectedId, string.Empty, "deleting the only venue clears the selection");
+
+        var copy = twin.Copy();
+        Ok(copy.Id != twin.Id && copy.Name == "A (copy)" && copy.OpenTime == twin.OpenTime, "duplicate gets a fresh id and keeps the rest");
     }
 
     // ------------------------------------------------------------------ export
