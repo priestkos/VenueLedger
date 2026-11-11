@@ -673,7 +673,7 @@ internal static class Program
         Ok(withoutNotes.Contains("Hours", StringComparison.Ordinal), "hours are never optional");
 
         var twelve = Exporter.Build(Board.Build(new List<Venue> { venue }, "Asia/Kolkata", Now, false),
-            new ExportOptions { Use24Hour = false });
+            new ExportOptions());
         Ok(twelve.Contains("8:00 PM-2:00 AM JST", StringComparison.Ordinal), "12-hour export");
 
         // The board zone's label is read at the session it labels, not at export time: a London venue

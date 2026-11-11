@@ -50,8 +50,6 @@ public sealed class Venue
     /// <summary>Never blank, so an empty row is still selectable in the list.</summary>
     public string DisplayName => string.IsNullOrWhiteSpace(Name) ? "Untitled venue" : Name.Trim();
 
-    public bool HasTravel => Travel.HasAddress(this);
-
     /// <summary>A copy gets a fresh id but keeps everything else, for "duplicate".</summary>
     public Venue Copy()
     {

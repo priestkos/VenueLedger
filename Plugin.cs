@@ -1,7 +1,6 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Game.Command;
@@ -100,7 +99,6 @@ public sealed class Plugin : IDalamudPlugin
 
         var options = new ExportOptions
         {
-            Use24Hour = configuration.Use24Hour,
             IncludeTravel = configuration.IncludeTravelInExport,
             IncludeNotes = configuration.IncludeNotesInExport,
         };

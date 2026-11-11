@@ -188,10 +188,6 @@ public static class ZoneBook
         return ModernIds.TryGetValue(candidate, out var modern) ? modern : candidate;
     }
 
-    /// <summary>The id to persist for a zone: IANA when convertible, otherwise whatever the platform uses.</summary>
-    public static string PersistId(TimeZoneInfo zone) =>
-        zone.Id == TimeZoneInfo.Local.Id ? string.Empty : IanaId(zone);
-
     /// <summary>Short label for the zone at <paramref name="at"/> (default: now), so London reads BST in summer.</summary>
     public static string Label(TimeZoneInfo zone, DateTimeOffset? at = null)
     {
@@ -603,7 +599,6 @@ public sealed class BoardView
     public DateTimeOffset Now { get; init; }
     public DateTimeOffset DayStart { get; init; }
     public DateTimeOffset DayEnd { get; init; }
-    public bool Use24Hour { get; init; } = true;
     public List<VenueRow> Rows { get; init; } = new();
 
     public int OpenNow => Rows.Count(r => r.IsOpen);
@@ -638,7 +633,6 @@ public static class Board
             Now = now,
             DayStart = dayStart,
             DayEnd = dayEnd,
-            Use24Hour = use24Hour,
             Rows = rows,
         };
     }
@@ -723,7 +717,6 @@ public static class Board
 
 public sealed class ExportOptions
 {
-    public bool Use24Hour { get; set; } = true;
     public bool IncludeTravel { get; set; } = true;
     public bool IncludeNotes { get; set; } = true;
 }

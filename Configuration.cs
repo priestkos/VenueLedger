@@ -101,15 +101,4 @@ public sealed class Configuration : IPluginConfiguration
         var next = Venues.Count == 0 ? null : Venues[Math.Min(index, Venues.Count - 1)];
         SelectedId = next?.Id ?? string.Empty;
     }
-
-    public void Move(int from, int to)
-    {
-        if (from < 0 || from >= Venues.Count) return;
-        if (to < 0 || to >= Venues.Count) return;
-        if (from == to) return;
-
-        var venue = Venues[from];
-        Venues.RemoveAt(from);
-        Venues.Insert(to, venue);
-    }
 }

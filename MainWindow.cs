@@ -707,7 +707,6 @@ public sealed class MainWindow : Window, IDisposable
     {
         var options = new ExportOptions
         {
-            Use24Hour = config.Use24Hour,
             IncludeTravel = config.IncludeTravelInExport,
             IncludeNotes = config.IncludeNotesInExport,
         };
