@@ -778,5 +778,43 @@ internal static class Program
         }
 
         Eq(drift, 0, "zone conversion is idempotent");
+
+        // The ledger list used to recompute each venue's status and "your time" text itself; it now reads the
+        // board row. Old formula kept here and compared over the whole sweep, both clocks, three board zones.
+        var all = new List<Venue>();
+        foreach (var openZone in zones)
+        foreach (var closeZone in zones)
+        foreach (var open in times)
+        foreach (var close in times)
+            all.Add(new Venue { OpenTime = open, CloseTime = close, OpenZone = openZone, CloseZone = closeZone });
+        all.Add(new Venue { OpenTime = "nope" });
+
+        var compared = 0;
+        var mismatched = 0;
+        foreach (var boardId in new[] { "", "Asia/Kolkata", "America/New_York" })
+        foreach (var use24 in new[] { true, false })
+        {
+            var board = Board.Build(all, boardId, Now, use24);
+            var boardZone = ZoneBook.Resolve(boardId);
+            foreach (var row in board.Rows)
+            {
+                var status = Scheduler.Status(row.Venue, Now);
+                var oldDetail = string.Empty;
+                if (status.Known && status.Session is not null)
+                {
+                    var o = TimeZoneInfo.ConvertTime(status.Session.Opens, boardZone);
+                    var c = TimeZoneInfo.ConvertTime(status.Session.Closes, boardZone);
+                    oldDetail = ClockText.Format((int)o.TimeOfDay.TotalMinutes, use24) + "-" +
+                                ClockText.Format((int)c.TimeOfDay.TotalMinutes, use24) + " your time";
+                }
+
+                var newDetail = row.Known ? row.BoardOpenText + "-" + row.BoardCloseText + " your time" : string.Empty;
+                compared++;
+                if (oldDetail != newDetail || status.State != row.Status.State || status.Remaining != row.Status.Remaining) mismatched++;
+            }
+        }
+
+        Eq(mismatched, 0, "ledger list text from the board row matches the old per-venue recompute (" + compared + " compared)");
+        Console.WriteLine("  ledger-list old/new comparisons: " + compared);
     }
 }

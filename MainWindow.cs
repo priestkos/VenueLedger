@@ -140,7 +140,7 @@ public sealed class MainWindow : Window, IDisposable
 
         using (var list = ImRaii.Child("##venuelist", new Vector2(listWidth, height), true))
         {
-            if (list.Success) DrawVenueList();
+            if (list.Success) DrawVenueList(board);
         }
 
         ImGui.SameLine();
@@ -151,7 +151,7 @@ public sealed class MainWindow : Window, IDisposable
         }
     }
 
-    private void DrawVenueList()
+    private void DrawVenueList(BoardView board)
     {
         Section("Ledger");
 
@@ -165,11 +165,12 @@ public sealed class MainWindow : Window, IDisposable
         ImGui.SetNextItemWidth(-1);
         ImGui.InputTextWithHint("##filter", "filter", ref filter, 40);
 
-        var now = DateTimeOffset.UtcNow;
         var shown = 0;
 
-        foreach (var venue in config.Venues.ToList())
+        // The board already holds every venue's status this frame, in ledger order.
+        foreach (var row in board.Rows)
         {
+            var venue = row.Venue;
             if (filter.Length > 0 &&
                 venue.DisplayName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0 &&
                 venue.Location.IndexOf(filter, StringComparison.OrdinalIgnoreCase) < 0)
@@ -179,7 +180,7 @@ public sealed class MainWindow : Window, IDisposable
 
             shown++;
 
-            var status = Scheduler.Status(venue, now);
+            var status = row.Status;
             var selected = config.SelectedId == venue.Id;
 
             if (ImGui.Selectable(venue.DisplayName + "##" + venue.Id, selected, ImGuiSelectableFlags.None,
@@ -194,15 +195,7 @@ public sealed class MainWindow : Window, IDisposable
                 ? (status.IsOpen ? "open - closes in " : "closed - opens in ") + ClockText.Humanize(status.Remaining)
                 : status.Error;
 
-            var boardZone = ZoneBook.Resolve(config.BoardZone);
-            var detail = string.Empty;
-            if (status.Known && status.Session is not null)
-            {
-                var open = TimeZoneInfo.ConvertTime(status.Session.Opens, boardZone);
-                var close = TimeZoneInfo.ConvertTime(status.Session.Closes, boardZone);
-                detail = ClockText.Format((int)open.TimeOfDay.TotalMinutes, config.Use24Hour) + "-" +
-                         ClockText.Format((int)close.TimeOfDay.TotalMinutes, config.Use24Hour) + " your time";
-            }
+            var detail = row.Known ? row.BoardOpenText + "-" + row.BoardCloseText + " your time" : string.Empty;
 
             ImGui.Indent(10f * ImGuiHelpers.GlobalScale);
             ImGui.TextDisabled(line);
