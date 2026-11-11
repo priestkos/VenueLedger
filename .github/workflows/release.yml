@@ -118,6 +118,10 @@ jobs:
           Expand-Archive -Path dalamud.zip -DestinationPath $dest -Force
           exit 0
 
+      - name: Run the offline checks
+        if: github.event_name != 'push' || github.ref != 'refs/heads/main' || steps.auto.outputs.skip != 'true'
+        run: dotnet run --project tools/LogicTests/LogicTests.csproj -c Release
+
       - name: Build VenueLedger
         if: github.event_name != 'push' || github.ref != 'refs/heads/main' || steps.auto.outputs.skip != 'true'
         shell: pwsh
@@ -152,7 +156,7 @@ jobs:
             }
             $dllEntry = $dllEntries | Where-Object { $_.Name -eq "$pluginAssemblyName.dll" } | Select-Object -First 1
             if (-not $dllEntry) {
-              $dllEntry = $dllEntries | Select-Object -First 1
+              throw "$pluginAssemblyName.dll not found inside latest.zip"
             }
             $manifestName = [System.IO.Path]::ChangeExtension($dllEntry.Name, '.json')
             $manifestEntry = $archive.Entries | Where-Object { $_.Name -eq $manifestName }
